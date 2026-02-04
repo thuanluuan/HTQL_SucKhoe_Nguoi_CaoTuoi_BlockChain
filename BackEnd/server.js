@@ -484,7 +484,7 @@ app.get("/", async (req, res) => {
 // B. Trang Danh Sách Bệnh Nhân (QUAN TRỌNG).
 app.get("/patients", async (req, res) => {
   try {
-    // Lấy dữ liệu mới nhất lên đầu
+    // Lấy dữ liệu mới nhất lên đầu...
     let recordsRaw = await Record.find().sort({ visitDate: -1 });
     if (!recordsRaw || recordsRaw.length === 0) {
       const summary = await backfillFromChainFromPatients();
@@ -526,7 +526,7 @@ app.get("/patients", async (req, res) => {
   }
 });
 
-// C. Trang Giao diện Tạo Bệnh Án
+// C. Trang Giao diện Tạo Bệnh Án.
 app.get("/create-record", (req, res) => {
   res.render("create-record", {
     title: "Tạo Bệnh Án",
@@ -537,7 +537,7 @@ app.get("/create-record", (req, res) => {
 
 // --- 4. CÁC API XỬ LÝ DỮ LIỆU ---
 
-// API 1: Lưu bệnh án vào MongoDB (Bước 1 - Chưa có Hash)
+// API 1: Lưu bệnh án vào MongoDB (Bước 1 - Chưa có Hash).
 app.post("/api/create-record", async (req, res) => {
   try {
     const {
@@ -566,7 +566,7 @@ app.post("/api/create-record", async (req, res) => {
         .json({ success: false, message: "Không tìm thấy bệnh nhân" });
     }
 
-    // Cập nhật chỉ số sinh mệnh mới (nếu có)
+    // Cập nhật chỉ số sinh mệnh mới (nếu có).
     const updates = {};
     if (vitalsUpdate && typeof vitalsUpdate === "object") {
       const currentVitals = patientExists.vitalSigns || {};
@@ -628,7 +628,7 @@ app.post("/api/create-record", async (req, res) => {
       await Patient.updateOne({ cccd: patientCCCD }, { $set: updates });
     }
 
-    // Tạo mã hồ sơ ngẫu nhiên (Ví dụ: REC-1234)
+    // Tạo mã hồ sơ ngẫu nhiên (Ví dụ: REC-1234).
     const newId = "REC-" + Math.floor(Math.random() * 10000);
 
     let resolvedDoctorName = (doctorName || "").trim();
@@ -665,7 +665,7 @@ app.post("/api/create-record", async (req, res) => {
   }
 });
 
-// API 1.5: Chuẩn bị dữ liệu on-chain (AES + IPFS) và trả CID.
+// API 1.5: Chuẩn bị dữ liệu on-chain (AES + IPFS) và trả CID
 app.post("/api/prepare-chain-record", async (req, res) => {
   try {
     const { recordId } = req.body;
@@ -718,7 +718,7 @@ app.post("/api/prepare-chain-record", async (req, res) => {
   }
 });
 
-// API 1.6: Kiểm tra và đồng bộ lại dữ liệu từ Blockchain.
+// API 1.6: Kiểm tra và đồng bộ lại dữ liệu từ Blockchain
 app.post("/api/verify-record", async (req, res) => {
   try {
     const { recordId } = req.body;
@@ -776,7 +776,7 @@ app.post("/api/verify-record", async (req, res) => {
   }
 });
 
-// API 1.7: Tra cứu recordIds theo patientKey.
+// API 1.7: Tra cứu recordIds theo patientKey
 app.get("/api/patient-records", async (req, res) => {
   try {
     const patientKey = (req.query.patientKey || "").trim();
@@ -801,7 +801,7 @@ app.get("/api/patient-records", async (req, res) => {
   }
 });
 
-// API 1.7.1: Backfill dữ liệu từ Blockchain theo danh sách bệnh nhân trong DB.
+// API 1.7.1: Backfill dữ liệu từ Blockchain theo danh sách bệnh nhân trong DB
 app.post("/api/backfill-chain", async (req, res) => {
   try {
     const summary = await backfillFromChainFromPatients();
@@ -814,17 +814,17 @@ app.post("/api/backfill-chain", async (req, res) => {
   }
 });
 
-// API 1.8: KHÔI PHỤC TOÀN BỘ DỮ LIỆU TỪ BLOCKCHAIN (Disaster Recovery).
-// API này chứng minh rằng dù mất DB, chỉ cần Blockchain còn là dữ liệu còn.
+// API 1.8: KHÔI PHỤC TOÀN BỘ DỮ LIỆU TỪ BLOCKCHAIN (Disaster Recovery)
+// API này chứng minh rằng dù mất DB, chỉ cần Blockchain còn là dữ liệu còn
 app.post("/api/admin/resync-all", async (req, res) => {
   try {
     console.log("⚠️ Đang thực hiện khôi phục toàn bộ dữ liệu từ Blockchain...");
     
-    // 1. Xóa trạng thái đồng bộ cũ để tránh conflict.
+    // 1. Xóa trạng thái đồng bộ cũ để tránh conflict
     await ChainSyncState.deleteMany({ key: "records" });
 
-    // 2. Gọi hàm đồng bộ bắt đầu từ Block 0 (hoặc block deploy contract).
-    // Chạy ngầm (không await) để trả về response ngay cho client đỡ timeout.
+    // 2. Gọi hàm đồng bộ bắt đầu từ Block 0 (hoặc block deploy contract)
+    // Chạy ngầm (không await) để trả về response ngay cho client đỡ timeout
     syncFromChain(0).then(() => console.log("✅ Khôi phục dữ liệu hoàn tất!"));
 
     return res.json({ success: true, message: "Đang tiến hành khôi phục dữ liệu từ Block 0. Vui lòng đợi vài phút và tải lại trang." });
@@ -834,7 +834,7 @@ app.post("/api/admin/resync-all", async (req, res) => {
   }
 });
 
-// API 1.6: Tra cứu bệnh nhân + lịch sử khám bệnh.
+// API 1.6: Tra cứu bệnh nhân + lịch sử khám bệnh
 app.get("/api/search-patient", async (req, res) => {
   try {
     const query = (req.query.query || "").trim();
@@ -868,7 +868,7 @@ app.get("/api/search-patient", async (req, res) => {
   }
 });
 
-// API 1.5: Lưu hồ sơ bệnh nhân vào MongoDB.
+// API 1.5: Lưu hồ sơ bệnh nhân vào MongoDB
 app.post("/api/create-patient", async (req, res) => {
   try {
     const {
@@ -927,22 +927,22 @@ app.post("/api/create-patient", async (req, res) => {
   }
 });
 
-// API 2: Cập nhật Hash sau khi ký Blockchain thành công (Bước 2).
+// API 2: Cập nhật Hash sau khi ký Blockchain thành công (Bước 2)
 app.post("/api/update-hash", async (req, res) => {
   try {
     const { recordId, hash, cid, txHash, patientKey } = req.body;
 
     console.log(`🔄 Đang đồng bộ Hash cho hồ sơ ${recordId}...`);
 
-    // Tìm hồ sơ và cập nhật mã Hash.
+    // Tìm hồ sơ và cập nhật mã Hash
     await Record.findOneAndUpdate(
       { recordId: recordId },
       {
-        blockchainHash: cid || hash, // Lưu CID/Hash từ Blockchain về.
+        blockchainHash: cid || hash, // Lưu CID/Hash từ Blockchain về
         blockchainCid: cid || hash || null,
         blockchainTx: txHash || null,
         patientIndexKey: patientKey || null,
-        isVerified: true, // Đánh dấu là Tin cậy (Xanh).
+        isVerified: true, // Đánh dấu là Tin cậy (Xanh)
       },
     );
 
@@ -954,7 +954,7 @@ app.post("/api/update-hash", async (req, res) => {
   }
 });
 
-// API 2.05: Đếm số hồ sơ theo bác sĩ.
+// API 2.05: Đếm số hồ sơ theo bác sĩ
 app.get("/api/count-records", async (req, res) => {
   try {
     let doctorName = (req.query.doctorName || "").trim();
@@ -1174,7 +1174,7 @@ app.delete("/api/doctor/:id", async (req, res) => {
     return res.status(500).json({ success: false, message: "Lỗi Server" });
   }
 });
-
+// Hàm hỗ trợ để escape regex đặc biệt trong email.
 function escapeRegex(input) {
   return input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
