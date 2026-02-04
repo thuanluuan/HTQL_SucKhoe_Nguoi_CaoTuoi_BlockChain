@@ -1,4 +1,4 @@
-/* Layout */
+/* Layout - Bố cục trang chi tiết */
 .detail-container {
   display: grid;
   grid-template-columns: 2.5fr 1fr;
@@ -8,13 +8,14 @@
   margin: 0 auto;
 }
 
+/* Responsive: Chuyển sang 1 cột trên màn hình nhỏ */
 @media (max-width: 1024px) {
   .detail-container {
     grid-template-columns: 1fr;
   }
 }
 
-/* Section Common */
+/* Section Common - Style chung cho các phần */
 .section-header {
   display: flex;
   align-items: center;
@@ -27,6 +28,7 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Panel chứa nội dung với hiệu ứng kính mờ */
 .card-panel {
   background: var(--card-bg); /* Fallback */
   background: rgba(30, 41, 59, 0.7);
@@ -38,7 +40,7 @@
   height: 100%;
 }
 
-/* Vitals Grid */
+/* Vitals Grid - Lưới hiển thị chỉ số sinh tồn */
 .vitals-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -46,6 +48,7 @@
   margin-bottom: 2rem;
 }
 
+/* Thẻ chỉ số sinh tồn */
 .vital-card {
   background: rgba(15, 23, 42, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -60,12 +63,14 @@
   overflow: hidden;
 }
 
+/* Hiệu ứng hover cho thẻ chỉ số */
 .vital-card:hover {
   transform: translateY(-5px);
   border-color: rgba(255, 255, 255, 0.1);
   box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
 }
 
+/* Đường kẻ màu trang trí phía trên thẻ */
 .vital-card::before {
   content: "";
   position: absolute;
@@ -82,6 +87,7 @@
   opacity: 0.5;
 }
 
+/* Màu sắc riêng cho từng loại chỉ số */
 .vital-card:nth-child(1) {
   --accent-color: #ef4444;
 } /* Heart */
@@ -95,12 +101,14 @@
   --accent-color: #fbbf24;
 } /* Temp */
 
+/* Icon chỉ số */
 .vital-card .icon {
   font-size: 1.8rem;
   margin-bottom: 0.75rem;
   filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
 }
 
+/* Tên chỉ số */
 .vital-card .label {
   font-size: 0.85rem;
   color: var(--text-secondary);
@@ -109,12 +117,14 @@
   letter-spacing: 0.5px;
 }
 
+/* Giá trị chỉ số */
 .vital-card .value {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-primary);
 }
 
+/* Đơn vị đo */
 .vital-card .unit {
   font-size: 0.8rem;
   color: var(--text-secondary);
@@ -122,13 +132,14 @@
   margin-left: 2px;
 }
 
-/* History List */
+/* History List - Danh sách lịch sử */
 .history-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
+/* Item lịch sử */
 .history-item {
   background: rgba(255, 255, 255, 0.03);
   border-left: 3px solid var(--text-secondary);
@@ -140,17 +151,19 @@
   transition: transform 0.2s;
 }
 
+/* Hiệu ứng hover cho item lịch sử */
 .history-item:hover {
   background: rgba(255, 255, 255, 0.05);
   transform: translateX(5px);
 }
 
+/* Item lịch sử dạng cảnh báo */
 .history-item.alert {
   border-left-color: #ef4444;
   background: linear-gradient(90deg, rgba(239, 68, 68, 0.1), transparent);
 }
 
-/* Info Groups */
+/* Info Groups - Nhóm thông tin chi tiết */
 .info-group {
   background: rgba(15, 23, 42, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -159,6 +172,7 @@
   margin-bottom: 1rem;
 }
 
+/* Label thông tin */
 .info-group label {
   display: block;
   color: var(--accent-cyan);
@@ -168,13 +182,14 @@
   font-weight: 600;
 }
 
+/* Giá trị thông tin */
 .info-value {
   color: var(--text-primary);
   line-height: 1.6;
   font-size: 0.95rem;
 }
 
-/* Attachments */
+/* Attachments - File đính kèm */
 .attachment-preview {
   background: rgba(0, 0, 0, 0.2);
   border: 1px dashed rgba(255, 255, 255, 0.2);
@@ -187,16 +202,19 @@
   transition: all 0.2s;
 }
 
+/* Hiệu ứng hover file đính kèm */
 .attachment-preview:hover {
   border-color: var(--accent-cyan);
   background: rgba(6, 182, 212, 0.05);
 }
 
+/* Icon file */
 .attachment-preview i:first-child {
   font-size: 1.2rem;
   color: var(--text-secondary);
 }
 
+/* Nút nhỏ (xóa/tải về) */
 .btn-sm {
   background: none;
   border: none;
@@ -210,7 +228,7 @@
   color: var(--text-primary);
 }
 
-/* Blockchain Panel */
+/* Blockchain Panel - Bảng thông tin Blockchain */
 .neon-panel {
   background: linear-gradient(
     165deg,
@@ -228,6 +246,7 @@
   height: fit-content;
 }
 
+/* Hiệu ứng dòng chảy neon trên đầu panel */
 .neon-panel::before {
   content: "";
   position: absolute;
@@ -245,6 +264,7 @@
   animation: neon-flow 3s linear infinite;
 }
 
+/* Keyframes cho hiệu ứng dòng chảy */
 @keyframes neon-flow {
   0% {
     background-position: 100% 0;
@@ -254,6 +274,7 @@
   }
 }
 
+/* Tiêu đề panel neon */
 .neon-header {
   text-align: center;
   font-size: 1.3rem;
@@ -267,6 +288,7 @@
   gap: 0.75rem;
 }
 
+/* Khu vực hiển thị mã Hash */
 .hash-display {
   background: rgba(0, 0, 0, 0.3);
   border-radius: 8px;
@@ -276,6 +298,7 @@
   word-break: break-all;
 }
 
+/* Label mã Hash */
 .hash-label {
   font-size: 0.75rem;
   color: var(--text-secondary);
@@ -283,6 +306,7 @@
   text-transform: uppercase;
 }
 
+/* Giá trị mã Hash */
 .hash-value {
   font-family: "Consolas", monospace;
   font-size: 0.85rem;
@@ -290,6 +314,7 @@
   line-height: 1.4;
 }
 
+/* Trạng thái xác thực */
 .verification-status {
   text-align: center;
   padding: 1.5rem;
@@ -302,6 +327,7 @@
   transition: all 0.3s;
 }
 
+/* Style khi đã xác thực thành công */
 .verification-status.verified {
   background: rgba(16, 185, 129, 0.1);
   border: 1px solid rgba(16, 185, 129, 0.3);
@@ -309,6 +335,7 @@
   box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
 }
 
+/* Nút xác thực với hiệu ứng pulse */
 .btn-verify-pulse {
   width: 100%;
   padding: 1rem;
@@ -326,6 +353,7 @@
   overflow: hidden;
 }
 
+/* Hiệu ứng hover nút xác thực */
 .btn-verify-pulse:hover {
   background: rgba(6, 182, 212, 0.1);
   box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
