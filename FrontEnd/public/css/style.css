@@ -1,3 +1,4 @@
+/* Biến CSS toàn cục định nghĩa màu sắc và giao diện */
 :root {
   --bg-color: #0f172a;
   --sidebar-bg: #1e293b;
@@ -10,6 +11,7 @@
   --shadow-color: rgba(6, 182, 212, 0.15); /* Cyan tint shadow */
 }
 
+/* Reset mặc định cho tất cả các phần tử */
 * {
   margin: 0;
   padding: 0;
@@ -17,6 +19,7 @@
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Thiết lập body với layout flex và màu nền */
 body {
   background-color: var(--bg-color);
   color: var(--text-primary);
@@ -24,7 +27,7 @@ body {
   min-height: 100vh;
 }
 
-/* Sidebar Styles */
+/* Sidebar Styles - Sidebar cố định bên trái */
 .sidebar {
   width: 260px;
   background-color: var(--sidebar-bg);
@@ -36,6 +39,7 @@ body {
   height: 100%;
 }
 
+/* Logo và tên thương hiệu trong sidebar */
 .brand {
   font-size: 1.5rem;
   font-weight: bold;
@@ -47,6 +51,7 @@ body {
   text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
 }
 
+/* Các mục menu trong sidebar */
 .menu-item {
   padding: 1rem;
   color: var(--text-secondary);
@@ -59,6 +64,7 @@ body {
   gap: 0.8rem;
 }
 
+/* Hiệu ứng hover và trạng thái active của menu */
 .menu-item:hover,
 .menu-item.active {
   background-color: rgba(6, 182, 212, 0.1);
@@ -66,7 +72,7 @@ body {
   box-shadow: 0 4px 12px var(--shadow-color);
 }
 
-/* Main Content Styles */
+/* Main Content Styles - Khu vực nội dung chính (bên phải sidebar) */
 .main-content {
   margin-left: 260px;
   flex: 1;
@@ -74,7 +80,7 @@ body {
   flex-direction: column;
 }
 
-/* Header Styles */
+/* Header Styles - Header cố định phía trên cùng */
 .header {
   height: 80px;
   background-color: rgba(15, 23, 42, 0.8);
@@ -89,12 +95,14 @@ body {
   z-index: 100;
 }
 
+/* Khu vực thông tin người dùng trong header */
 .user-profile {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
+/* Avatar người dùng */
 .avatar {
   width: 40px;
   height: 40px;
@@ -102,7 +110,7 @@ body {
   background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green));
 }
 
-/* Dashboard Cards */
+/* Dashboard Cards - Grid layout cho các thẻ dashboard */
 .dashboard-grid {
   padding: 2rem;
   display: grid;
@@ -110,6 +118,7 @@ body {
   gap: 1.5rem;
 }
 
+/* Style cho từng thẻ card */
 .card {
   background-color: var(--card-bg);
   border-radius: 16px;
@@ -121,6 +130,7 @@ body {
   transition: transform 0.2s;
 }
 
+/* Hiệu ứng nổi lên khi hover vào card */
 .card:hover {
   transform: translateY(-5px);
   box-shadow:
@@ -129,6 +139,7 @@ body {
   border-color: var(--accent-cyan);
 }
 
+/* Tiêu đề card */
 .card h3 {
   color: var(--text-secondary);
   font-size: 0.875rem;
@@ -137,6 +148,7 @@ body {
   margin-bottom: 0.5rem;
 }
 
+/* Giá trị hiển thị trong card */
 .card .value {
   font-size: 2rem;
   font-weight: bold;
@@ -144,12 +156,13 @@ body {
   margin-bottom: 0.25rem;
 }
 
+/* Chỉ số xu hướng (tăng/giảm) */
 .card .trend {
   font-size: 0.875rem;
   color: var(--accent-green);
 }
 
-/* Table Styles */
+/* Table Styles - Container chứa bảng dữ liệu */
 .table-container {
   background-color: var(--card-bg);
   border-radius: 16px;
@@ -158,11 +171,13 @@ body {
   border: 1px solid var(--border-color);
 }
 
+/* Style chung cho bảng */
 table {
   width: 100%;
   border-collapse: collapse;
 }
 
+/* Tiêu đề cột */
 th {
   text-align: left;
   padding: 1rem;
@@ -170,12 +185,14 @@ th {
   border-bottom: 1px solid var(--border-color);
 }
 
+/* Ô dữ liệu */
 td {
   padding: 1rem;
   border-bottom: 1px solid var(--border-color);
   color: var(--text-primary);
 }
 
+/* Style cơ bản cho nút bấm */
 .btn {
   padding: 0.5rem 1rem;
   border-radius: 8px;
@@ -185,12 +202,14 @@ td {
   transition: all 0.3s;
 }
 
+/* Nút chính (Primary Button) */
 .btn-primary {
   background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green));
   color: #fff;
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
+/* Hiệu ứng hover cho nút chính */
 .btn-primary:hover {
   opacity: 0.9;
   box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
@@ -198,22 +217,24 @@ td {
 
 /* NEW STYLES */
 
-/* Dashboard Split Layout */
+/* Dashboard Split Layout - Layout chia cột cho dashboard */
 .dashboard-content-split {
   display: flex;
   gap: 1.5rem;
   padding: 0 2rem 2rem 2rem;
 }
 
+/* Panel bên trái (chiếm phần lớn) */
 .left-panel {
   flex: 3;
 }
 
+/* Panel bên phải (nhỏ hơn) */
 .right-panel {
   flex: 1;
 }
 
-/* Activity Badge in Table */
+/* Activity Badge in Table - Huy hiệu hiển thị loại hoạt động */
 .activity-badge {
   padding: 0.25rem 0.5rem;
   border-radius: 6px;
@@ -221,6 +242,7 @@ td {
   font-weight: 600;
 }
 
+/* Màu sắc cho từng loại hoạt động */
 .activity-badge.update {
   background-color: rgba(6, 182, 212, 0.1);
   color: var(--accent-cyan);
@@ -236,7 +258,7 @@ td {
   color: var(--accent-green);
 }
 
-/* System Stats */
+/* System Stats - Dòng hiển thị trạng thái hệ thống */
 .system-stat-row {
   display: flex;
   justify-content: space-between;
@@ -245,19 +267,21 @@ td {
   color: var(--text-secondary);
 }
 
+/* Trạng thái kết nối */
 .status-badge.connected {
   color: var(--accent-green);
   font-weight: bold;
   text-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
 }
 
+/* Đường kẻ phân cách */
 .system-divider {
   height: 1px;
   background-color: var(--border-color);
   margin: 1.5rem 0;
 }
 
-/* Toolbar */
+/* Toolbar - Thanh công cụ chứa tìm kiếm và bộ lọc */
 .toolbar-container {
   display: flex;
   justify-content: space-between;
@@ -265,12 +289,14 @@ td {
   gap: 1rem;
 }
 
+/* Ô tìm kiếm */
 .search-box {
   position: relative;
   flex: 1;
   max-width: 400px;
 }
 
+/* Icon tìm kiếm */
 .search-box i {
   position: absolute;
   left: 1rem;
@@ -279,6 +305,7 @@ td {
   color: var(--text-secondary);
 }
 
+/* Input tìm kiếm */
 .search-box input {
   width: 100%;
   padding: 0.8rem 1rem 0.8rem 2.5rem;
@@ -293,11 +320,13 @@ td {
   border-color: var(--accent-cyan);
 }
 
+/* Nhóm hành động trong toolbar */
 .toolbar-actions {
   display: flex;
   gap: 1rem;
 }
 
+/* Bộ lọc ngày */
 .date-filter {
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
@@ -307,7 +336,7 @@ td {
   outline: none;
 }
 
-/* Verified Badge */
+/* Verified Badge - Huy hiệu xác thực */
 .verified-badge {
   background-color: rgba(16, 185, 129, 0.15);
   color: var(--accent-green);
@@ -318,6 +347,7 @@ td {
   border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
+/* Nút outline nhỏ */
 .btn-sm-outline {
   padding: 0.4rem 0.8rem;
   border: 1px solid var(--border-color);
@@ -328,12 +358,13 @@ td {
   transition: all 0.2s;
 }
 
+/* Hiệu ứng hover cho nút outline */
 .btn-sm-outline:hover {
   border-color: var(--accent-cyan);
   color: var(--accent-cyan);
 }
 
-/* Detail Page Layout */
+/* Detail Page Layout - Layout trang chi tiết hồ sơ */
 .detail-container {
   padding: 2rem;
   display: flex;
@@ -341,21 +372,24 @@ td {
   height: calc(100vh - 80px); /* Fill remaining height */
 }
 
+/* Phần thông tin y tế (bên trái) */
 .medical-info-section {
   flex: 3;
   overflow-y: auto;
 }
 
+/* Phần xác thực Blockchain (bên phải) */
 .blockchain-verify-section {
   flex: 2;
   min-width: 350px;
 }
 
-/* Info Groups */
+/* Info Groups - Nhóm thông tin chi tiết */
 .info-group {
   margin-bottom: 1.5rem;
 }
 
+/* Label thông tin */
 .info-group label {
   display: block;
   color: var(--text-secondary);
@@ -363,6 +397,7 @@ td {
   margin-bottom: 0.5rem;
 }
 
+/* Giá trị thông tin */
 .info-value {
   font-size: 1.1rem;
   padding: 0.8rem;
@@ -371,7 +406,7 @@ td {
   border-left: 3px solid var(--accent-cyan);
 }
 
-/* Neon Panel */
+/* Neon Panel - Panel hiệu ứng neon cho Blockchain info */
 .neon-panel {
   background-color: rgba(15, 23, 42, 0.9);
   border: 2px solid var(--accent-cyan);
@@ -385,6 +420,7 @@ td {
   flex-direction: column;
 }
 
+/* Tiêu đề panel neon */
 .neon-header {
   font-size: 1.25rem;
   font-weight: bold;
@@ -396,6 +432,7 @@ td {
   text-shadow: 0 0 10px rgba(6, 182, 212, 0.6);
 }
 
+/* Khu vực hiển thị mã Hash */
 .hash-display {
   margin-bottom: 1.5rem;
   background-color: rgba(0, 0, 0, 0.3);
@@ -406,16 +443,19 @@ td {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Label mã Hash */
 .hash-label {
   font-size: 0.75rem;
   color: var(--text-secondary);
   margin-bottom: 0.3rem;
 }
 
+/* Giá trị mã Hash */
 .hash-value {
   color: var(--accent-green);
 }
 
+/* Trạng thái xác thực blockchain */
 .verification-status {
   margin-top: auto;
   text-align: center;
@@ -428,6 +468,7 @@ td {
   transition: all 0.5s;
 }
 
+/* Nút xác thực với hiệu ứng pulse */
 .btn-verify-pulse {
   width: 100%;
   padding: 1rem;
@@ -443,18 +484,20 @@ td {
   box-shadow: 0 0 10px rgba(16, 185, 129, 0.1);
 }
 
+/* Hiệu ứng hover nút xác thực */
 .btn-verify-pulse:hover {
   background: rgba(16, 185, 129, 0.1);
   box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
 }
 
-/* Consent List */
+/* Consent List - Danh sách quyền truy cập */
 .consent-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
+/* Item trong danh sách quyền */
 .consent-item {
   display: flex;
   justify-content: space-between;
@@ -465,24 +508,28 @@ td {
   border: 1px solid var(--border-color);
 }
 
+/* Thông tin bác sĩ/đối tác */
 .doctor-info-group {
   display: flex;
   gap: 1rem;
   align-items: center;
 }
 
+/* Tên bác sĩ */
 .doctor-info-group .name {
   font-weight: bold;
   font-size: 1.1rem;
   margin-bottom: 0.2rem;
 }
 
+/* Lý do truy cập */
 .doctor-info-group .reason {
   color: var(--accent-cyan);
   font-size: 0.9rem;
   margin-bottom: 0.2rem;
 }
 
+/* Thông tin phụ */
 .doctor-info-group .meta {
   font-size: 0.8rem;
   color: var(--text-secondary);
@@ -490,7 +537,7 @@ td {
   gap: 1rem;
 }
 
-/* Toggle Switch */
+/* Toggle Switch - Nút toggle switch (bật/tắt) */
 .switch {
   position: relative;
   display: inline-block;
@@ -498,12 +545,14 @@ td {
   height: 28px;
 }
 
+/* Ẩn input checkbox mặc định */
 .switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
+/* Thanh trượt của switch */
 .slider {
   position: absolute;
   cursor: pointer;
@@ -516,6 +565,7 @@ td {
   transition: 0.4s;
 }
 
+/* Nút tròn trên thanh trượt */
 .slider:before {
   position: absolute;
   content: "";
@@ -528,21 +578,24 @@ td {
   transition: 0.4s;
 }
 
+/* Trạng thái checked (bật) */
 input:checked + .slider {
   background-color: var(--accent-green);
 }
 
+/* Trạng thái focus */
 input:focus + .slider {
   box-shadow: 0 0 1px var(--accent-green);
 }
 
+/* Di chuyển nút tròn khi bật */
 input:checked + .slider:before {
   -webkit-transform: translateX(22px);
   -ms-transform: translateX(22px);
   transform: translateX(22px);
 }
 
-/* Rounded sliders */
+/* Rounded sliders - Bo tròn switch */
 .slider.round {
   border-radius: 34px;
 }
@@ -551,6 +604,7 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
+/* Nút outline chung */
 .btn-outline {
   padding: 0.5rem 1rem;
   border-radius: 8px;
