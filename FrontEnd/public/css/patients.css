@@ -1,10 +1,10 @@
-/* Patients List Layout */
+/* Patients List Layout - Bố cục danh sách bệnh nhân */
 .page-container {
   padding: 2rem;
   animation: fadeIn 0.5s ease-out;
 }
 
-/* 1. Toolbar Section */
+/* 1. Toolbar Section - Thanh công cụ tìm kiếm và lọc */
 .toolbar-container {
   background: rgba(30, 41, 59, 0.4);
   backdrop-filter: blur(10px);
@@ -20,11 +20,13 @@
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
+/* Container ô tìm kiếm */
 .search-box {
   position: relative;
   width: 350px;
 }
 
+/* Icon tìm kiếm */
 .search-box i {
   position: absolute;
   left: 15px;
@@ -34,6 +36,7 @@
   pointer-events: none;
 }
 
+/* Input nhập từ khóa */
 .search-box input {
   width: 100%;
   background: rgba(15, 23, 42, 0.6);
@@ -45,6 +48,7 @@
   transition: all 0.3s ease;
 }
 
+/* Hiệu ứng focus cho input */
 .search-box input:focus {
   outline: none;
   border-color: var(--accent-cyan);
@@ -52,6 +56,7 @@
   background: rgba(15, 23, 42, 0.8);
 }
 
+/* Nút lọc theo ngày */
 .date-filter {
   background: rgba(15, 23, 42, 0.6);
   border: 1px solid var(--border-color);
@@ -67,7 +72,7 @@
   border-color: var(--text-secondary);
 }
 
-/* 2. Table Section */
+/* 2. Table Section - Khu vực bảng dữ liệu */
 .table-container {
   background: rgba(30, 41, 59, 0.4);
   backdrop-filter: blur(10px);
@@ -84,11 +89,13 @@ table {
   border-collapse: collapse;
 }
 
+/* Header của bảng */
 thead {
   background: rgba(0, 0, 0, 0.2);
   border-bottom: 1px solid var(--border-color);
 }
 
+/* Style cho tiêu đề cột */
 th {
   padding: 1.25rem 1.5rem;
   text-align: left;
@@ -99,6 +106,7 @@ th {
   letter-spacing: 0.05em;
 }
 
+/* Style cho hàng trong bảng */
 tbody tr {
   border-bottom: 1px solid rgba(255, 255, 255, 0.02);
   transition: all 0.2s ease;
@@ -108,6 +116,7 @@ tbody tr:last-child {
   border-bottom: none;
 }
 
+/* Hiệu ứng hover cho hàng */
 tbody tr:hover {
   background: rgba(255, 255, 255, 0.02);
 }
@@ -119,7 +128,7 @@ td {
   vertical-align: middle;
 }
 
-/* ID Cell Style */
+/* ID Cell Style - Style cho ô mã định danh */
 .id-pill {
   font-family: "Consolas", "Monaco", monospace;
   font-weight: 600;
@@ -131,7 +140,7 @@ td {
   display: inline-block;
 }
 
-/* Action Button */
+/* Action Button - Nút hành động (Xem chi tiết) */
 .btn-sm-outline {
   padding: 8px 16px;
   border-radius: 8px;
@@ -146,6 +155,7 @@ td {
   gap: 0.5rem;
 }
 
+/* Icon mũi tên ẩn (hiện khi hover) */
 .btn-sm-outline:after {
   content: "\f061";
   font-family: "Font Awesome 5 Free";
@@ -155,6 +165,7 @@ td {
   transition: all 0.3s;
 }
 
+/* Hiệu ứng hover cho nút hành động */
 .btn-sm-outline:hover {
   border-color: var(--accent-cyan);
   color: var(--accent-cyan);
@@ -166,7 +177,7 @@ td {
   transform: translateX(0);
 }
 
-/* Status Badges */
+/* Status Badges - Huy hiệu trạng thái (Đã xác thực) */
 .verified-badge {
   background: rgba(46, 213, 115, 0.1);
   color: #2ed573;
@@ -184,7 +195,7 @@ td {
   font-size: 0.8rem;
 }
 
-/* Animations */
+/* Animations - Hiệu ứng chuyển động */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -196,7 +207,7 @@ td {
   }
 }
 
-/* Scrollbar beautify */
+/* Scrollbar beautify - Tùy chỉnh thanh cuộn */
 ::-webkit-scrollbar {
   width: 8px;
 }
