@@ -1,4 +1,4 @@
-/* Vitals Grid */
+/* Vitals Grid - Lưới hiển thị các chỉ số sinh tồn */
 .vitals-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -6,6 +6,7 @@
   margin-bottom: 1.5rem;
 }
 
+/* Thẻ hiển thị từng chỉ số (nhịp tim, huyết áp...) */
 .vital-card {
   background-color: var(--card-bg);
   padding: 1rem;
@@ -14,36 +15,41 @@
   text-align: center;
 }
 
+/* Icon đại diện cho chỉ số */
 .vital-card .icon {
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
   color: var(--accent-cyan);
 }
 
+/* Tên chỉ số */
 .vital-card .label {
   font-size: 0.8rem;
   color: var(--text-secondary);
   margin-bottom: 0.2rem;
 }
 
+/* Giá trị đo được */
 .vital-card .value {
   font-size: 1.2rem;
   font-weight: bold;
   color: var(--text-primary);
 }
 
+/* Đơn vị đo */
 .vital-card .unit {
   font-size: 0.8rem;
   color: var(--text-secondary);
 }
 
-/* History Section */
+/* History Section - Phần lịch sử đo lường */
 .history-section {
   margin-bottom: 2rem;
   padding-bottom: 2rem;
   border-bottom: 1px solid var(--border-color);
 }
 
+/* Tiêu đề của phần lịch sử */
 .section-header {
   display: flex;
   align-items: center;
@@ -54,12 +60,14 @@
   font-weight: 600;
 }
 
+/* Danh sách các lần đo trước */
 .history-list {
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
 }
 
+/* Item trong danh sách lịch sử */
 .history-item {
   display: flex;
   justify-content: space-between;
@@ -69,6 +77,7 @@
   border-left: 2px solid var(--text-secondary);
 }
 
+/* Trạng thái cảnh báo (chỉ số bất thường) */
 .history-item.alert {
   border-left-color: #ef4444;
   background-color: rgba(239, 68, 68, 0.1);
