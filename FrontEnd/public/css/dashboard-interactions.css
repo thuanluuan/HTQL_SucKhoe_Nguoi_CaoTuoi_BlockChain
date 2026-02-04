@@ -1,4 +1,4 @@
-/* Clickable Dashboard Cards */
+/* Các thẻ Dashboard có thể click được */
 .clickable-card {
   cursor: pointer;
   transition:
@@ -9,16 +9,19 @@
   overflow: hidden;
 }
 
+/* Hiệu ứng khi di chuột vào thẻ */
 .clickable-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(6, 182, 212, 0.15);
   border-color: var(--accent-cyan);
 }
 
+/* Hiệu ứng khi nhấn chuột (active) */
 .clickable-card:active {
   transform: translateY(-2px);
 }
 
+/* Icon mũi tên chỉ hướng (ẩn mặc định) */
 .clickable-card::after {
   content: "\f054"; /* FontAwesome Chevron Right */
   font-family: "Font Awesome 5 Free";
@@ -33,6 +36,7 @@
   font-size: 1.5rem;
 }
 
+/* Hiển thị icon mũi tên khi hover */
 .clickable-card:hover::after {
   opacity: 0.5;
   right: 1rem;
