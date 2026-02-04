@@ -71,7 +71,7 @@ function encryptField(plainText) {
     data: encrypted.toString("base64"),
   };
 }
-
+// GIẢI MÃ KIỂU AES-256-GCM
 function decryptField(payload) {
   if (!payload || !payload.data || !payload.iv || !payload.tag) return "";
   const key = getAesKey();
@@ -91,7 +91,7 @@ function hashPatientKey(cccd) {
   if (!normalized) return "0x" + "0".repeat(64);
   return "0x" + crypto.createHash("sha256").update(normalized).digest("hex");
 }
-
+// Bình thường hóa recordId từ các kiểu dữ liệu khác nhau
 function normalizeRecordId(value) {
   if (!value) return "";
   if (typeof value === "string") return value;
@@ -118,14 +118,14 @@ function normalizePatientKey(value) {
   }
   return raw.toLowerCase();
 }
-
+// Giải tên bác sĩ từ địa chỉ ví
 async function resolveDoctorNameFromWallet(wallet) {
   if (!wallet) return "";
   const normalized = wallet.toLowerCase();
   const doctor = await Doctor.findOne({ walletAddress: normalized });
   return doctor?.fullName || "";
 }
-
+// Khởi tạo kết nối Pinata
 function getIpfsClient() {
   if (cachedIpfsClient) return cachedIpfsClient;
   if (PINATA_JWT) {
