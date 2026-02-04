@@ -1,3 +1,2 @@
 Database
-mongodb+srv://BlockChain:BlockChain@blockchain.o4qa0fb.mongodb.net/?appName=BlockChain
-thuan220843@student.nctu.edu.vn
+mongodb+srv://BlockChain:<db_password>@blockchain.o4qa0fb.mongodb.net/?appName=BlockChain
