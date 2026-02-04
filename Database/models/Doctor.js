@@ -1,6 +1,6 @@
 // models/Doctor.js
 const mongoose = require("mongoose");
-
+// Mô hình dữ liệu cho bác sĩ
 const DoctorSchema = new mongoose.Schema({
   fullName: { type: String, required: true },
   email: { type: String, required: true },

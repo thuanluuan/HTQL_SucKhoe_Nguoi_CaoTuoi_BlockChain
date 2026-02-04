@@ -1,6 +1,6 @@
 // models/Patient.js
 const mongoose = require("mongoose");
-
+// Mô hình dữ liệu cho bệnh nhân
 const PatientSchema = new mongoose.Schema({
   cccd: { type: String, required: true, unique: true },
   fullName: { type: String, required: true },

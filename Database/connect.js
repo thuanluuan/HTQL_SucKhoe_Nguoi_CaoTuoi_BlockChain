@@ -1,7 +1,7 @@
 // database/connect.js
 const mongoose = require("mongoose");
 
-// Chuỗi kết nối MongoDB Atlas của bạn
+// Chuỗi kết nối MongoDB Atlas
 const dbURI =
   "mongodb+srv://BlockChain:BlockChain@blockchain.o4qa0fb.mongodb.net/HealthChainDB?retryWrites=true&w=majority&appName=BlockChain";
 

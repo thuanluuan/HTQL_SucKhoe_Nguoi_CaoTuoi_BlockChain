@@ -1,6 +1,6 @@
 // models/Record.js
 const mongoose = require("mongoose");
-
+// Mô hình dữ liệu cho hồ sơ y tế
 const RecordSchema = new mongoose.Schema({
   recordId: { type: String, required: true, unique: true }, // ID hiển thị (VD: REC-001)
   patientCCCD: { type: String, required: true },
