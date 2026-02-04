@@ -1,16 +1,18 @@
 /* Landing Page Specific Styles */
 
-/* Smooth Scroll */
+/* Smooth Scroll - Cuộn trang mượt mà */
 html {
   scroll-behavior: smooth;
 }
 
+/* Section chung cho landing page */
 .landing-section {
   padding: 6rem 2rem;
   position: relative;
   overflow: hidden;
 }
 
+/* Tiêu đề section với hiệu ứng gradient text */
 .section-title {
   font-size: 2.5rem;
   text-align: center;
@@ -23,6 +25,7 @@ html {
   z-index: 2;
 }
 
+/* Phụ đề dưới tiêu đề chính */
 .section-subtitle {
   text-align: center;
   color: var(--text-secondary);
@@ -31,11 +34,12 @@ html {
   font-size: 1.1rem;
 }
 
-/* About Section */
+/* About Section - Phần giới thiệu */
 #about {
   background: linear-gradient(to bottom, #020617, #0f172a);
 }
 
+/* Grid layout cho các thẻ giới thiệu */
 .about-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -44,6 +48,7 @@ html {
   margin: 0 auto;
 }
 
+/* Thẻ thông tin trong phần giới thiệu */
 .about-card {
   text-align: center;
   padding: 2rem;
@@ -53,6 +58,7 @@ html {
   transition: transform 0.3s;
 }
 
+/* Hiệu ứng hover nổi lên */
 .about-card:hover {
   transform: translateY(-10px);
   background: rgba(30, 41, 59, 0.5);
@@ -65,13 +71,13 @@ html {
   filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.5));
 }
 
-/* Features Section */
+/* Features Section - Phần tính năng */
 #features {
   background-color: #0f172a;
   position: relative;
 }
 
-/* Decorative background glow */
+/* Decorative background glow - Hiệu ứng nền phát sáng trang trí */
 #features::before {
   content: "";
   position: absolute;
@@ -88,6 +94,7 @@ html {
   z-index: 0;
 }
 
+/* Grid layout cho các tính năng (3 cột) */
 .feature-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -98,6 +105,7 @@ html {
   z-index: 1;
 }
 
+/* Thẻ tính năng với hiệu ứng kính mờ (backdrop-filter) */
 .feature-card {
   background: rgba(15, 23, 42, 0.8);
   backdrop-filter: blur(10px);
@@ -108,6 +116,7 @@ html {
   cursor: default;
 }
 
+/* Hiệu ứng hover cho thẻ tính năng */
 .feature-card:hover {
   border-color: var(--accent-cyan);
   box-shadow: 0 10px 30px rgba(6, 182, 212, 0.15);
@@ -127,6 +136,7 @@ html {
   font-size: 1.5rem;
 }
 
+/* Tiêu đề tính năng */
 .feature-title {
   font-size: 1.25rem;
   font-weight: bold;
@@ -139,7 +149,7 @@ html {
   line-height: 1.6;
 }
 
-/* Security Section */
+/* Security Section - Phần bảo mật */
 #security {
   background: linear-gradient(to bottom, #0f172a, #020617);
   display: flex;
@@ -162,6 +172,7 @@ html {
   position: relative;
 }
 
+/* Animation icon khiên bảo mật bay lơ lửng */
 .shield-animate {
   font-size: 15rem;
   background: linear-gradient(45deg, var(--accent-green), var(--accent-cyan));
@@ -172,6 +183,7 @@ html {
   animation: float 6s ease-in-out infinite;
 }
 
+/* Keyframes cho hiệu ứng bay */
 @keyframes float {
   0% {
     transform: translateY(0px) rotate(0deg);
@@ -193,6 +205,7 @@ html {
   margin-top: 2rem;
 }
 
+/* Item trong danh sách bảo mật */
 .security-list li {
   margin-bottom: 1.5rem;
   display: flex;
@@ -207,7 +220,7 @@ html {
   font-size: 1.2rem;
 }
 
-/* Footer */
+/* Footer - Chân trang */
 .landing-footer {
   border-top: 1px solid var(--border-color);
   padding: 3rem;
@@ -216,7 +229,7 @@ html {
   background: #020617;
 }
 
-/* Responsive */
+/* Responsive - Tương thích thiết bị di động */
 @media (max-width: 768px) {
   .feature-grid {
     grid-template-columns: 1fr;
