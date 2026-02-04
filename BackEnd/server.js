@@ -144,7 +144,7 @@ async function ipfsAddJson(data) {
   const result = await client.pinJSONToIPFS(data);
   return result.IpfsHash;
 }
-
+// Lấy JSON từ IPFS qua Pinata Gateway
 async function ipfsGetJson(cid) {
   const url = `${PINATA_GATEWAY}${cid}`;
   const response = await fetch(url);
@@ -155,7 +155,7 @@ async function ipfsGetJson(cid) {
   }
   return await response.json();
 }
-
+// Xây dựng payload lưu lên IPFS
 function buildRecordPayload({ record, patient }) {
   const nameEnc = encryptField(patient.fullName || "");
   const cccdEnc = encryptField(patient.cccd || "");
@@ -188,7 +188,7 @@ function buildRecordPayload({ record, patient }) {
     createdAt: new Date().toISOString(),
   };
 }
-
+// Áp dụng dữ liệu từ chuỗi vào DB
 async function applyChainRecord({
   recordId,
   cid,
@@ -213,7 +213,7 @@ async function applyChainRecord({
     console.warn("⚠️ Không giải mã được CCCD từ IPFS:", recordId);
     return;
   }
-
+// Cập nhật thông tin bệnh nhân
   await Patient.findOneAndUpdate(
     { cccd: patientCCCD },
     {
@@ -227,7 +227,7 @@ async function applyChainRecord({
     },
     { upsert: true },
   );
-
+// Cập nhật thông tin hồ sơ bệnh án
   await Record.findOneAndUpdate(
     { recordId },
     {
@@ -253,7 +253,7 @@ async function applyChainRecord({
     { upsert: true },
   );
 }
-
+/// Đồng bộ dữ liệu từ Blockchain
 async function syncFromChain(forceStartBlock = null) {
   try {
     const provider = new ethers.JsonRpcProvider(RPC_URL);
@@ -331,7 +331,7 @@ async function syncFromChain(forceStartBlock = null) {
     console.error("❌ Lỗi đồng bộ Blockchain:", error?.message || error);
   }
 }
-
+// Backfill dữ liệu từ Blockchain theo danh sách bệnh nhân trong DB
 async function backfillFromChainFromPatients() {
   const provider = new ethers.JsonRpcProvider(RPC_URL);
   const contract = new ethers.Contract(
@@ -344,7 +344,7 @@ async function backfillFromChainFromPatients() {
   let syncedRecords = 0;
   let failedRecords = 0;
   let skippedPatients = 0;
-
+// Duyệt từng bệnh nhân
   for (const patient of patients) {
     const patientKey = normalizePatientKey(
       patient.patientIndexKey || hashPatientKey(patient.cccd || ""),
@@ -396,7 +396,7 @@ async function backfillFromChainFromPatients() {
 
   return { totalRecordIds, syncedRecords, failedRecords, skippedPatients };
 }
-
+// Bắt đầu quy trình đồng bộ chuỗi định kỳ
 function startChainSync() {
   if (!RPC_URL || !CONTRACT_ADDRESS) return;
   backfillFromChainFromPatients().catch((error) => {
