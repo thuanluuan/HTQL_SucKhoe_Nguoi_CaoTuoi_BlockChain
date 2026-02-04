@@ -1,4 +1,4 @@
-/* Modal Styles */
+/* Modal Styles - Style cho cửa sổ Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -17,11 +17,13 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Trạng thái mở của overlay */
 .modal-overlay.open {
   opacity: 1;
   visibility: visible;
 }
 
+/* Nội dung chính của Modal */
 .modal-content {
   background: rgba(30, 41, 59, 0.95); /* Dark semi-transparent */
   padding: 2.5rem;
@@ -36,10 +38,12 @@
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+/* Hiệu ứng xuất hiện của modal content khi mở */
 .modal-overlay.open .modal-content {
   transform: translateY(0) scale(1);
 }
 
+/* Header của Modal (Tiêu đề + Nút đóng) */
 .modal-header {
   display: flex;
   justify-content: space-between;
@@ -49,6 +53,7 @@
   padding-bottom: 1rem;
 }
 
+/* Tiêu đề Modal với hiệu ứng gradient */
 .modal-title {
   font-size: 1.5rem;
   font-weight: 700;
@@ -59,6 +64,7 @@
   letter-spacing: -0.5px;
 }
 
+/* Nút đóng Modal (X) */
 .close-modal {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -74,6 +80,7 @@
   transition: all 0.2s;
 }
 
+/* Hiệu ứng hover cho nút đóng */
 .close-modal:hover {
   background: rgba(239, 68, 68, 0.1);
   color: #ef4444;
@@ -81,10 +88,12 @@
   transform: rotate(90deg);
 }
 
+/* Nhóm các thành phần form */
 .form-group {
   margin-bottom: 0.8rem;
 }
 
+/* Label cho input */
 .form-group label {
   display: block;
   margin-bottom: 0.3rem;
@@ -93,7 +102,7 @@
   font-weight: 500;
 }
 
-/* Common input styles */
+/* Common input styles - Style chung cho input và select */
 .form-control,
 .status-select {
   width: 100%;
@@ -106,7 +115,7 @@
   font-size: 0.9rem;
 }
 
-/* Focus states */
+/* Focus states - Trạng thái khi focus vào input */
 .form-control:focus,
 .status-select:focus {
   border-color: var(--accent-cyan);
@@ -114,7 +123,7 @@
   background: rgba(15, 23, 42, 0.9);
 }
 
-/* Button Group */
+/* Button Group - Nhóm nút hành động cuối modal */
 .modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -124,7 +133,7 @@
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Cancel Button */
+/* Cancel Button - Nút hủy bỏ */
 .btn-secondary {
   padding: 0.6rem 1.2rem;
   background: transparent;
@@ -137,13 +146,14 @@
   font-size: 0.9rem;
 }
 
+/* Hiệu ứng hover cho nút hủy */
 .btn-secondary:hover {
   background: rgba(255, 255, 255, 0.05);
   color: var(--text-primary);
   border-color: var(--text-primary);
 }
 
-/* Save Button */
+/* Save Button - Nút lưu/chính */
 .btn-primary-modal {
   padding: 0.6rem 1.5rem;
   background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
@@ -157,6 +167,7 @@
   font-size: 0.9rem;
 }
 
+/* Hiệu ứng hover cho nút lưu */
 .btn-primary-modal:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(6, 182, 212, 0.4);
