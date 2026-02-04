@@ -1292,6 +1292,7 @@ app.get("/record/:id", async (req, res) => {
     res.status(500).send("Lỗi Server");
   }
 });
+// Route: Đăng nhập / Đăng xuất / Tạo hồ sơ bệnh nhân
 app.get("/login", (req, res) => res.render("login", { title: "Đăng nhập" }));
 app.get("/logout", (req, res) => res.redirect("/login"));
 app.get("/create-patient", (req, res) =>
@@ -1310,6 +1311,7 @@ app.get("/accounts", async (req, res) => {
     res.render("accounts", { title: "Tài khoản", doctors: [] });
   }
 });
+// Route: Nhật ký hoạt động (Danh sách bệnh nhân)
 app.get("/activity-log", async (req, res) => {
   try {
     const patients = await Patient.find().sort({ createdAt: -1 });
@@ -1359,7 +1361,7 @@ app.get("/patient/:cccd", async (req, res) => {
   }
 });
 
-// --- 6. KHỞI ĐỘNG SERVER ---
+// -- 6. KHỞI ĐỘNG SERVER --
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server đang chạy tại: http://localhost:${PORT}`);
