@@ -5,13 +5,13 @@ const path = require("path");
 const crypto = require("crypto");
 const { ethers } = require("ethers");
 const PinataSDK = require("@pinata/sdk");
-
+// Các thư viện trên dùng để kết nối Blockchain, IPFS, mã hóa AES, v.v.
 // --- 1. CẤU HÌNH & KẾT NỐI ---
 
-// A. Lấy Config Contract (Địa chỉ & ABI)
+// A. Lấy Config Contract(Địa chỉ & ABI)
 const { CONTRACT_ADDRESS, CONTRACT_ABI } = require("./contract");
 
-// B. Kết nối Database
+// B. Kết nối Database.
 const connectDB = require("../Database/connect");
 const Patient = require("../Database/models/Patient");
 const Record = require("../Database/models/Record");
@@ -19,10 +19,10 @@ const Doctor = require("../Database/models/Doctor");
 const ChainSyncState = require("../Database/models/ChainSyncState");
 const bcrypt = require("bcryptjs");
 
-// Kết nối ngay lập tức
+// Kết nối ngay lập tức.
 connectDB();
 
-// --- 1.1. TIỆN ÍCH MÃ HÓA & IPFS ---
+// --- 1.1. TIỆN ÍCH MÃ HÓA & IPFS , BLOCKCHAIN, ĐỒNG BỘ CHUỖI,KẾT NỐI PINATA ---
 const AES_SECRET = process.env.AES_SECRET || "CHANGE_ME_AES_SECRET";
 const IPFS_API_URL =
   process.env.IPFS_API_URL || "https://ipfs.infura.io:5001/api/v0";
@@ -53,7 +53,7 @@ if (!PINATA_JWT && !(PINATA_API_KEY && PINATA_API_SECRET)) {
 function getAesKey() {
   return crypto.createHash("sha256").update(AES_SECRET).digest();
 }
-
+// MÃ HÓA KIỂU AES-256-GCM
 function encryptField(plainText) {
   const text = (plainText || "").toString();
   const key = getAesKey();
