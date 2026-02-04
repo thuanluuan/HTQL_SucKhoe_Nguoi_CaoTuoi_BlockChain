@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="/css/header-features.css" />
     <link rel="stylesheet" href="/css/modal.css" />
     <style>
+      /* Wrapper bao quanh nội dung chính của trang */
       .page-wrapper {
         padding: 0 2rem 2rem;
       }
@@ -28,6 +29,7 @@
         margin-bottom: 1.5rem;
       }
 
+      /* Style cho các tab quản lý (nếu có mở rộng sau này) */
       .mgmt-tabs {
         display: flex;
         gap: 1rem;
@@ -54,6 +56,7 @@
         border-color: rgba(52, 211, 153, 0.4);
       }
 
+      /* Container nội dung tab */
       .mgmt-container {
         display: none;
       }
@@ -62,6 +65,7 @@
         display: block;
       }
 
+      /* Panel chứa bảng dữ liệu */
       .card-panel {
         background: var(--card-bg);
         border: 1px solid var(--border-color);
@@ -70,6 +74,7 @@
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
       }
 
+      /* Thanh công cụ (Tìm kiếm + Nút thêm) */
       .toolbar {
         display: flex;
         flex-wrap: wrap;
@@ -79,6 +84,7 @@
         margin-bottom: 1.5rem;
       }
 
+      /* Ô tìm kiếm tùy chỉnh */
       .search-box {
         display: flex;
         align-items: center;
@@ -98,6 +104,7 @@
         width: 100%;
       }
 
+      /* Container bảng để bo góc và xử lý overflow */
       .table-container {
         border-radius: 12px;
         overflow: hidden;
@@ -132,6 +139,7 @@
         color: var(--text-primary);
       }
 
+      /* Chip hiển thị địa chỉ ví rút gọn */
       .wallet-chip {
         font-family: monospace;
         color: var(--accent-green);
@@ -141,12 +149,14 @@
         display: inline-block;
       }
 
+      /* Trạng thái khi bảng trống */
       .empty-state {
         text-align: center;
         color: var(--text-secondary);
         padding: 2rem 0;
       }
 
+      /* Nút chính (Gradient xanh) */
       .btn-primary {
         background: linear-gradient(135deg, #00f260 0%, #0575e6 100%);
         border: none;
@@ -163,17 +173,21 @@
     </style>
   </head>
   <body>
+    <!-- Sidebar Menu -->
     <%- include('partials/sidebar') %>
 
     <main class="main-content">
+      <!-- Header Top -->
       <%- include('partials/header') %>
 
       <div class="page-wrapper">
+        <!-- Tiêu đề trang -->
         <div class="page-title">Quản lý tài khoản</div>
         <div class="page-subtitle">
           Thêm bác sĩ và quản lý thông tin đăng nhập theo ví.
         </div>
 
+        <!-- Khu vực quản lý danh sách bác sĩ -->
         <div id="doctors-section" class="mgmt-container active">
           <div class="card-panel">
             <div class="toolbar">
@@ -190,6 +204,7 @@
               </button>
             </div>
 
+            <!-- Bảng danh sách bác sĩ -->
             <div class="table-container">
               <table>
                 <thead>
@@ -204,8 +219,10 @@
                   </tr>
                 </thead>
                 <tbody id="doctors-table-body">
+                  <!-- Loop qua danh sách doctors được truyền từ server -->
                   <% if (doctors && doctors.length > 0) { %>
                     <% doctors.forEach(function(d) { %>
+                      <!-- Lưu dữ liệu vào data attributes để dùng cho JS -->
                       <tr
                         data-id="<%= d._id %>"
                         data-fullname="<%= d.fullName %>"
@@ -283,8 +300,10 @@
     </main>
 
     <script>
+      // Biến lưu ID của bác sĩ đang được chỉnh sửa
       let currentEditingId = null;
 
+      // Hàm tiện ích: Lấy dữ liệu từ các data-attribute của hàng (tr)
       function getRowData(btn) {
         const row = btn.closest("tr");
         if (!row) return null;
@@ -303,6 +322,7 @@
         };
       }
 
+      // Mở modal xem chi tiết thông tin
       function openDetailModal(btn) {
         const data = getRowData(btn);
         if (!data) return;
@@ -322,10 +342,12 @@
         document.getElementById("detailModal").classList.add("open");
       }
 
+      // Đóng modal chi tiết
       function closeDetailModal() {
         document.getElementById("detailModal").classList.remove("open");
       }
 
+      // Mở modal chỉnh sửa thông tin
       function openEditModal(btn) {
         const data = getRowData(btn);
         if (!data) return;
@@ -343,10 +365,12 @@
         document.getElementById("editModal").classList.add("open");
       }
 
+      // Đóng modal chỉnh sửa
       function closeEditModal() {
         document.getElementById("editModal").classList.remove("open");
       }
 
+      // Gửi yêu cầu cập nhật thông tin bác sĩ lên server
       async function saveChanges() {
         if (!currentEditingId) return;
 
@@ -383,6 +407,7 @@
         }
       }
 
+      // Bật/Tắt trạng thái hoạt động của tài khoản
       async function toggleDoctorStatus(btn) {
         const data = getRowData(btn);
         if (!data || !data.id) return;
@@ -407,6 +432,7 @@
         }
       }
 
+      // Xóa tài khoản bác sĩ
       async function deleteDoctor(btn) {
         const data = getRowData(btn);
         if (!data || !data.id) return;
@@ -430,6 +456,7 @@
         }
       }
 
+      // Lọc danh sách bác sĩ ở phía client (Frontend Search)
       function filterDoctors(value) {
         const keyword = (value || "").trim().toLowerCase();
         const rows = document.querySelectorAll("#doctors-table-body tr");
@@ -449,14 +476,17 @@
         }
       }
 
+      // Mở modal thêm bác sĩ mới
       function openAddDoctorModal() {
         document.getElementById("addDoctorModal").classList.add("open");
       }
 
+      // Đóng modal thêm bác sĩ
       function closeAddDoctorModal() {
         document.getElementById("addDoctorModal").classList.remove("open");
       }
 
+      // Gửi yêu cầu tạo mới bác sĩ
       async function saveNewDoctor() {
         const name = document.getElementById("add-name").value;
         const email = document.getElementById("add-email").value;
@@ -507,6 +537,7 @@
 
     </script>
 
+    <!-- Modal Chỉnh Sửa -->
     <div id="editModal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-header">
@@ -581,6 +612,7 @@
       </div>
     </div>
 
+    <!-- Modal Thêm Bác Sĩ Mới -->
     <div id="addDoctorModal" class="modal-overlay">
       <div class="modal-content" style="width: 600px; max-height: 90vh; overflow-y: auto">
         <div class="modal-header">
@@ -650,6 +682,7 @@
       </div>
     </div>
 
+    <!-- Modal Xem Chi Tiết -->
     <div id="detailModal" class="modal-overlay">
       <div class="modal-content" style="width: 640px; max-height: 90vh; overflow-y: auto">
         <div class="modal-header">
