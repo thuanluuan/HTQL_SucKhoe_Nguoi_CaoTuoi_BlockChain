@@ -834,7 +834,7 @@ app.post("/api/admin/resync-all", async (req, res) => {
   }
 });
 
-// API 1.6: Tra cứu bệnh nhân + lịch sử khám bệnh
+// API 1.6: Tra cứu bệnh nhân + lịch sử khám bệnh.
 app.get("/api/search-patient", async (req, res) => {
   try {
     const query = (req.query.query || "").trim();
@@ -868,7 +868,7 @@ app.get("/api/search-patient", async (req, res) => {
   }
 });
 
-// API 1.5: Lưu hồ sơ bệnh nhân vào MongoDB
+// API 1.5: Lưu hồ sơ bệnh nhân vào MongoDB.
 app.post("/api/create-patient", async (req, res) => {
   try {
     const {
@@ -927,22 +927,22 @@ app.post("/api/create-patient", async (req, res) => {
   }
 });
 
-// API 2: Cập nhật Hash sau khi ký Blockchain thành công (Bước 2)
+// API 2: Cập nhật Hash sau khi ký Blockchain thành công (Bước 2).
 app.post("/api/update-hash", async (req, res) => {
   try {
     const { recordId, hash, cid, txHash, patientKey } = req.body;
 
     console.log(`🔄 Đang đồng bộ Hash cho hồ sơ ${recordId}...`);
 
-    // Tìm hồ sơ và cập nhật mã Hash
+    // Tìm hồ sơ và cập nhật mã Hash.
     await Record.findOneAndUpdate(
       { recordId: recordId },
       {
-        blockchainHash: cid || hash, // Lưu CID/Hash từ Blockchain về
+        blockchainHash: cid || hash, // Lưu CID/Hash từ Blockchain về.
         blockchainCid: cid || hash || null,
         blockchainTx: txHash || null,
         patientIndexKey: patientKey || null,
-        isVerified: true, // Đánh dấu là Tin cậy (Xanh)
+        isVerified: true, // Đánh dấu là Tin cậy (Xanh).
       },
     );
 
@@ -954,7 +954,7 @@ app.post("/api/update-hash", async (req, res) => {
   }
 });
 
-// API 2.05: Đếm số hồ sơ theo bác sĩ
+// API 2.05: Đếm số hồ sơ theo bác sĩ.
 app.get("/api/count-records", async (req, res) => {
   try {
     let doctorName = (req.query.doctorName || "").trim();
@@ -979,7 +979,7 @@ app.get("/api/count-records", async (req, res) => {
   }
 });
 
-// API 2.4: Cập nhật hash bệnh nhân sau khi ký Blockchain
+// API 2.4: Cập nhật hash bệnh nhân sau khi ký Blockchain.
 app.post("/api/update-patient-hash", async (req, res) => {
   try {
     const { cccd, hash } = req.body;
@@ -1001,7 +1001,7 @@ app.post("/api/update-patient-hash", async (req, res) => {
   }
 });
 
-// API 2.1: Thêm bác sĩ mới (yêu cầu ví)
+// API 2.1: Thêm bác sĩ mới (yêu cầu ví).
 app.post("/api/create-doctor", async (req, res) => {
   try {
     const {
@@ -1063,7 +1063,7 @@ app.post("/api/create-doctor", async (req, res) => {
   }
 });
 
-// API 2.1.1: Cập nhật thông tin bác sĩ
+// API 2.1.1: Cập nhật thông tin bác sĩ.
 app.post("/api/update-doctor", async (req, res) => {
   try {
     const {
@@ -1124,7 +1124,7 @@ app.post("/api/update-doctor", async (req, res) => {
   }
 });
 
-// API 2.1.2: Cập nhật trạng thái bác sĩ
+// API 2.1.2: Cập nhật trạng thái bác sĩ.
 app.post("/api/doctor/status", async (req, res) => {
   try {
     const { id, status } = req.body;
@@ -1153,7 +1153,7 @@ app.post("/api/doctor/status", async (req, res) => {
   }
 });
 
-// API 2.1.3: Xóa bác sĩ
+// API 2.1.3: Xóa bác sĩ.
 app.delete("/api/doctor/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -1179,7 +1179,7 @@ function escapeRegex(input) {
   return input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-// API 2.2: Đăng nhập bằng ví bác sĩ
+// API 2.2: Đăng nhập bằng ví bác sĩ.
 app.post("/api/login-wallet", async (req, res) => {
   try {
     const { walletAddress } = req.body;
@@ -1214,7 +1214,7 @@ app.post("/api/login-wallet", async (req, res) => {
   }
 });
 
-// API 2.3: Đăng nhập admin bằng email/password
+// API 2.3: Đăng nhập admin bằng email/password.
 app.post("/api/login-admin", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -1252,14 +1252,14 @@ app.post("/api/login-admin", async (req, res) => {
   }
 });
 
-// --- 5. CÁC ROUTES PHỤ (Views tĩnh) ---
-// --- Route: Xem chi tiết bệnh án ---
+// -- 5. CÁC ROUTES PHỤ (Views tĩnh) --
+// -- Route: Xem chi tiết bệnh án --
 app.get("/record/:id", async (req, res) => {
   try {
     const recordId = req.params.id;
     const role = req.query.role || "admin";
     const cccd = req.query.cccd || "";
-    // Tìm hồ sơ trong DB
+    // Tìm hồ sơ trong DB.
     const record = await Record.findOne({ recordId: recordId });
 
     if (!record) {
