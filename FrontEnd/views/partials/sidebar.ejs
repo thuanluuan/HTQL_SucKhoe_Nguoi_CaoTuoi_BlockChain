@@ -1,0 +1,49 @@
+<div class="sidebar">
+  <div class="brand"><i class="fas fa-cubes"></i> HealthChain</div>
+  <nav>
+    <a
+      href="/"
+      class="menu-item <%= title.includes('Dashboard') ? 'active' : '' %>"
+    >
+      <i class="fas fa-home"></i> Tổng quan
+    </a>
+    <a
+      href="/patients"
+      class="menu-item <%= title.includes('Hồ sơ sức khỏe') ? 'active' : '' %>"
+    >
+      <i class="fas fa-user-injured"></i> Hồ sơ sức khỏe
+    </a>
+    <a
+      href="/create-record"
+      class="menu-item <%= title.includes('Tạo Bệnh Án') || title.includes('Tạo Hồ Sơ') ? 'active' : '' %>"
+    >
+      <i class="fas fa-folder-plus"></i> Tiếp nhận bệnh nhân
+    </a>
+    <a
+      href="/activity-log"
+      class="menu-item <%= title.includes('Quản lý bệnh nhân') ? 'active' : '' %>"
+    >
+      <i class="fas fa-user-cog"></i> Quản lý bệnh nhân
+    </a>
+    <a
+      href="/accounts"
+      class="menu-item <%= title.includes('Quản lý tài khoản') ? 'active' : '' %>"
+      id="accountsMenuItem"
+    >
+      <i class="fas fa-users-cog"></i> Quản lý tài khoản
+    </a>
+  </nav>
+</div>
+<script>
+  (function hideAccountsForNonAdmin() {
+    try {
+      const role = sessionStorage.getItem("healthchain_role") || "";
+      if (role !== "admin") {
+        const item = document.getElementById("accountsMenuItem");
+        if (item) item.style.display = "none";
+      }
+    } catch (e) {
+      // no-op
+    }
+  })();
+</script>

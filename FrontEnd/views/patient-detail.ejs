@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <% if (role !== 'patient') { %> <%- include('partials/sidebar') %> <% } %>
+
+    <main
+      class="main-content"
+      style="<%= role === 'patient' ? 'margin-left:0; width:100%;' : '' %>"
+    >
+      <%- include('partials/header', { hideWallet: role === 'patient',
+      hideNotifications: role === 'patient', hideUserMenu: role === 'patient' })
+      %>
+
+      <div style="padding: 0 2rem; margin-bottom: 2rem">
+        <div class="page-header" style="margin-bottom: 2rem">
+          <h1 style="font-size: 1.8rem; margin-bottom: 0.5rem">
+            Chi tiết bệnh nhân
+          </h1>
+          <p style="color: var(--text-secondary)">
+            Thông tin tổng quan và lịch sử khám bệnh.
+          </p>
+        </div>
+
+        <div
+          style="
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+          "
+        >
+          <div style="font-weight: 600; margin-bottom: 10px">
+            <i class="fas fa-user"></i> Thông tin bệnh nhân
+          </div>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(2, minmax(0, 1fr));
+              gap: 10px 14px;
+              font-size: 0.95rem;
+            "
+          >
+            <div><strong>Họ và Tên:</strong> <%= patient.fullName %></div>
+            <div><strong>CCCD:</strong> <%= patient.cccd %></div>
+            <div>
+              <strong>Ngày Sinh:</strong> <%= patient.birthDate || 'N/A' %>
+            </div>
+            <div><strong>Số ĐT:</strong> <%= patient.phone || 'N/A' %></div>
+            <div style="grid-column: 1 / -1">
+              <strong>Địa Chỉ:</strong> <%= patient.address || 'N/A' %>
+            </div>
+            <div style="grid-column: 1 / -1">
+              <strong>Chỉ số sinh mệnh:</strong>
+              <span>
+                <% if (patient.vitalSigns) { %> <%= patient.vitalSigns.heightCm
+                ? ('Chiều cao: ' + patient.vitalSigns.heightCm + ' cm') : '' %>
+                <%= patient.vitalSigns.weightKg ? (' | Cân nặng: ' +
+                patient.vitalSigns.weightKg + ' kg') : '' %> <%=
+                patient.vitalSigns.bloodPressure ? (' | Huyết áp: ' +
+                patient.vitalSigns.bloodPressure) : '' %> <%=
+                patient.vitalSigns.heartRate ? (' | Nhịp tim: ' +
+                patient.vitalSigns.heartRate + ' bpm') : '' %> <% } else { %>
+                N/A <% } %>
+              </span>
+            </div>
+            <div style="grid-column: 1 / -1">
+              <strong>Tiền sử bệnh án:</strong>
+              <span style="white-space: pre-line"
+                ><%= patient.medicalHistory || 'N/A' %></span
+              >
+            </div>
+            <div style="grid-column: 1 / -1">
+              <strong>Trạng thái dữ liệu:</strong>
+              <span id="patientDataStatus" style="font-weight: 600">
+                <% if (patient.isVerified) { %>
+                <span style="color: #2ed573"
+                  ><i class="fas fa-check-circle"></i> Có hồ sơ on-chain</span
+                >
+                <% } else { %>
+                <span style="color: #ff4757"
+                  ><i class="fas fa-exclamation-circle"></i> Chưa có hồ sơ
+                  on-chain</span
+                >
+                <% } %>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          style="
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+          "
+        >
+          <div style="font-weight: 600; margin-bottom: 10px">
+            <i class="fas fa-history"></i> Lịch sử khám bệnh
+          </div>
+
+          <table
+            class="log-table"
+            style="width: 100%; border-collapse: collapse"
+          >
+            <thead>
+              <tr>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 0.75rem;
+                    color: var(--text-secondary);
+                  "
+                >
+                  Mã hồ sơ
+                </th>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 0.75rem;
+                    color: var(--text-secondary);
+                  "
+                >
+                  Chẩn đoán
+                </th>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 0.75rem;
+                    color: var(--text-secondary);
+                  "
+                >
+                  Bác sĩ
+                </th>
+                <th
+                  style="
+                    text-align: left;
+                    padding: 0.75rem;
+                    color: var(--text-secondary);
+                  "
+                >
+                  Ngày khám
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (records && records.length > 0) { %> <%
+              records.forEach(function(r) { %>
+              <tr style="border-top: 1px solid var(--border-color)">
+                <td style="padding: 0.75rem">
+                  <a
+                    href="/record/<%= r.recordId %><%= role === 'patient' ? ('?role=patient&cccd=' + patient.cccd) : '' %>"
+                    style="color: var(--accent-cyan); text-decoration: none"
+                  >
+                    <%= r.recordId %>
+                  </a>
+                </td>
+                <td style="padding: 0.75rem"><%= r.diagnosis || 'N/A' %></td>
+                <td style="padding: 0.75rem"><%= r.doctorName || 'N/A' %></td>
+                <td style="padding: 0.75rem; color: var(--text-secondary)">
+                  <%= r.visitDate ? r.visitDate.toLocaleString('vi-VN') : 'N/A'
+                  %>
+                </td>
+              </tr>
+              <% }); %> <% } else { %>
+              <tr>
+                <td
+                  colspan="4"
+                  style="
+                    text-align: center;
+                    padding: 1rem;
+                    color: var(--text-secondary);
+                  "
+                >
+                  Chưa có lịch sử khám bệnh.
+                </td>
+              </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      const PATIENT_INDEX_KEY = "<%= patient.patientIndexKey || '' %>";
+
+      async function autoCheckPatientIntegrity() {
+        const statusEl = document.getElementById("patientDataStatus");
+        if (!statusEl || !PATIENT_INDEX_KEY) return;
+
+        try {
+          const response = await fetch(
+            `/api/patient-records?patientKey=${encodeURIComponent(
+              PATIENT_INDEX_KEY,
+            )}`,
+          );
+          const result = await response.json();
+          const recordCount = Array.isArray(result.recordIds)
+            ? result.recordIds.length
+            : 0;
+
+          if (recordCount > 0) {
+            statusEl.innerHTML =
+              '<span style="color:#2ed573;"><i class="fas fa-check-circle"></i> Có hồ sơ on-chain (' +
+              recordCount +
+              ")</span>";
+          } else {
+            statusEl.innerHTML =
+              '<span style="color:#ff4757;"><i class="fas fa-triangle-exclamation"></i> Chưa có hồ sơ on-chain</span>';
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", autoCheckPatientIntegrity);
+    </script>
+  </body>
+</html>

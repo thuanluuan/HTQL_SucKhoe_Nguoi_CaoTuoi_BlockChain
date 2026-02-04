@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng nhập - HealthChain</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/landing.css" />
+    <style>
+      .landing-page {
+        background: linear-gradient(145deg, var(--bg-color) 0%, #020617 100%);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .landing-header {
+        padding: 1.5rem 4rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .nav-links a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+
+      .nav-links a:hover {
+        color: var(--accent-cyan);
+      }
+
+      .hero-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 4rem 8rem;
+        flex: 1;
+      }
+
+      .hero-text h1 {
+        font-size: 3.5rem;
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(to right, #fff, var(--accent-cyan));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .floating-card {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(20px);
+        padding: 2.5rem;
+        border-radius: 24px;
+        width: 440px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+      }
+
+      .card-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+      }
+
+      .helper-text {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+      }
+
+      .input-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .transparent-input {
+        width: 100%;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: white;
+        outline: none;
+        transition: border-color 0.3s;
+      }
+
+      .transparent-input:focus {
+        border-color: var(--accent-cyan);
+      }
+
+      .btn-metamask {
+        width: 100%;
+        padding: 1rem;
+        background-color: #f6851b;
+        color: white;
+        border-radius: 8px;
+        border: none;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      .btn-metamask:hover {
+        transform: translateY(-2px);
+      }
+
+      .form-tab {
+        display: none;
+      }
+
+      .form-tab.active {
+        display: block;
+      }
+    </style>
+  </head>
+  <body class="landing-page">
+    <script>
+      (function resetAuthState() {
+        try {
+          sessionStorage.removeItem("healthchain_logged_in");
+          sessionStorage.removeItem("healthchain_role");
+          sessionStorage.removeItem("healthchain_user_name");
+          sessionStorage.removeItem("healthchain_patient_cccd");
+          localStorage.removeItem("healthchain_wallet_connected");
+          localStorage.removeItem("healthchain_wallet_address");
+        } catch (e) {
+          // no-op
+        }
+      })();
+    </script>
+    <header class="landing-header">
+      <div class="brand"><i class="fas fa-cubes"></i> HealthChain</div>
+      <nav class="nav-links">
+        <a href="#about">Về chúng tôi</a>
+        <a href="#features">Tính năng</a>
+        <a href="#security">Bảo mật</a>
+      </nav>
+      <button
+        id="landingConnectWalletBtn"
+        class="btn btn-outline"
+        style="border: 1px solid var(--accent-cyan); color: var(--accent-cyan)"
+      >
+        Connect Wallet
+      </button>
+    </header>
+
+    <section class="hero-section">
+      <div class="hero-text">
+        <h1>Hồ sơ sức khỏe<br />Minh bạch & An toàn</h1>
+        <p
+          style="
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            max-width: 500px;
+            margin-bottom: 2rem;
+          "
+        >
+          Công nghệ Blockchain giúp bạn làm chủ dữ liệu y tế của mình. Chia sẻ
+          an toàn, bảo mật tuyệt đối.
+        </p>
+      </div>
+
+      <div class="floating-card">
+        <div id="patientSection" class="form-tab active">
+          <div class="card-title">Tra cứu hồ sơ bệnh nhân</div>
+          <div class="helper-text">
+            Nhập CCCD để xem hồ sơ sức khỏe của bạn.
+          </div>
+          <form id="patientLoginForm">
+            <div class="input-group">
+              <input
+                id="patientCccdInput"
+                type="text"
+                class="transparent-input"
+                placeholder="Nhập CCCD"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              style="width: 100%; padding: 1rem"
+            >
+              Tra cứu
+            </button>
+          </form>
+        </div>
+
+        <div id="staffSection" class="form-tab">
+          <div class="card-title">Đăng nhập nhân viên</div>
+          <form id="adminLoginForm">
+            <div class="input-group">
+              <input
+                id="adminEmailInput"
+                type="email"
+                class="transparent-input"
+                placeholder="Email"
+                required
+              />
+            </div>
+            <div class="input-group">
+              <input
+                id="adminPasswordInput"
+                type="password"
+                class="transparent-input"
+                placeholder="Mật khẩu"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              style="width: 100%; padding: 1rem"
+            >
+              Đăng nhập
+            </button>
+          </form>
+          <div class="helper-text" style="margin-top: 1rem">
+            Hoặc đăng nhập bằng ví:
+          </div>
+          <button id="loginWalletBtn" class="btn-metamask">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg"
+              width="24"
+            />
+            Đăng nhập bằng MetaMask
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="landing-section">
+      <h2 class="section-title">Về HealthChain</h2>
+      <p class="section-subtitle">
+        Chúng tôi xây dựng tương lai của y tế số, nơi dữ liệu được bảo vệ bằng
+        công nghệ Blockchain tiên tiến nhất.
+      </p>
+
+      <div class="about-grid">
+        <div class="about-card">
+          <div class="about-icon"><i class="fas fa-eye"></i></div>
+          <h3>Tầm Nhìn</h3>
+          <p style="color: var(--text-secondary); margin-top: 1rem">
+            Trở thành nền tảng y tế số tin cậy nhất, kết nối hàng triệu bệnh
+            nhân và bác sĩ trên toàn cầu.
+          </p>
+        </div>
+        <div class="about-card">
+          <div class="about-icon"><i class="fas fa-rocket"></i></div>
+          <h3>Sứ Mệnh</h3>
+          <p style="color: var(--text-secondary); margin-top: 1rem">
+            Trao quyền kiểm soát dữ liệu sức khỏe lại cho người bệnh, đảm bảo
+            tính minh bạch và riêng tư.
+          </p>
+        </div>
+        <div class="about-card">
+          <div class="about-icon">
+            <i class="fas fa-hand-holding-heart"></i>
+          </div>
+          <h3>Giá Trị Cốt Lõi</h3>
+          <p style="color: var(--text-secondary); margin-top: 1rem">
+            Minh Bạch - An Toàn - Tiện Lợi. Chúng tôi đặt sức khỏe và dữ liệu
+            của bạn lên hàng đầu.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="landing-section">
+      <h2 class="section-title">Tính Năng Nổi Bật</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <i class="fas fa-file-contract"></i>
+          </div>
+          <h3 class="feature-title">Smart Contracts</h3>
+          <p class="feature-desc">
+            Tự động hóa quy trình chia sẻ dữ liệu y tế với Hợp đồng thông minh,
+            giảm thiểu rủi ro con người.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-box"><i class="fas fa-share-alt"></i></div>
+          <h3 class="feature-title">Chia Sẻ Tức Thì</h3>
+          <p class="feature-desc">
+            Cấp quyền truy cập cho bác sĩ chỉ trong vài giây, bất kể bạn đang ở
+            đâu trên thế giới.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-box"><i class="fas fa-database"></i></div>
+          <h3 class="feature-title">Lưu Trữ Phân Tán</h3>
+          <p class="feature-desc">
+            Dữ liệu không bị lưu tại một máy chủ duy nhất, loại bỏ nguy cơ tấn
+            công tập trung.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-box"><i class="fas fa-history"></i></div>
+          <h3 class="feature-title">Lịch Sử Minh Bạch</h3>
+          <p class="feature-desc">
+            Mọi thay đổi trên hồ sơ bệnh án đều được ghi lại vĩnh viễn và không
+            thể sửa đổi trái phép.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-box"><i class="fas fa-user-shield"></i></div>
+          <h3 class="feature-title">Quyền Riêng Tư</h3>
+          <p class="feature-desc">
+            Bạn là người duy nhất nắm giữ Private Key để giải mã dữ liệu sức
+            khỏe của chính mình.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <i class="fas fa-laptop-medical"></i>
+          </div>
+          <h3 class="feature-title">Theo Dõi Từ Xa</h3>
+          <p class="feature-desc">
+            Kết nối với các thiết bị IoT y tế để cập nhật chỉ số sinh tồn theo
+            thời gian thực.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Security Section -->
+    <section id="security" class="landing-section">
+      <div class="security-container">
+        <div class="security-visual">
+          <i class="fas fa-shield-virus shield-animate"></i>
+        </div>
+        <div class="security-content">
+          <h2
+            class="section-title"
+            style="text-align: left; margin-bottom: 2rem"
+          >
+            Bảo Mật Cấp Độ Ngân Hàng
+          </h2>
+          <p
+            style="
+              color: var(--text-secondary);
+              line-height: 1.6;
+              margin-bottom: 2rem;
+            "
+          >
+            HealthChain sử dụng mã hóa RSA-2048 và AES-256 để đảm bảo dữ liệu
+            của bạn bất khả xâm phạm. Ngay cả đội ngũ phát triển cũng không thể
+            xem trộm hồ sơ của bạn.
+          </p>
+          <ul class="security-list">
+            <li>
+              <i class="fas fa-check-circle"></i> Mã hóa đầu cuối (End-to-End
+              Encryption)
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i> Xác thực đa yếu tố (2FA &
+              Biometrics)
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i> Kiểm toán an ninh định kỳ 24/7
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i> Tuân thủ tiêu chuẩn HIPAA &
+              GDPR
+            </li>
+          </ul>
+          <a
+            href="https://en.wikipedia.org/wiki/Security_paper"
+            target="_blank"
+            class="btn btn-primary"
+            style="text-decoration: none; display: inline-block"
+          >
+            Tìm hiểu thêm về Security Paper
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="landing-footer">
+      <p>© 2026 HealthChain. All rights reserved.</p>
+      <div
+        style="
+          margin-top: 1rem;
+          display: flex;
+          justify-content: center;
+          gap: 1rem;
+        "
+      >
+        <a href="#" style="color: var(--text-secondary)"
+          ><i class="fab fa-facebook"></i
+        ></a>
+        <a href="#" style="color: var(--text-secondary)"
+          ><i class="fab fa-twitter"></i
+        ></a>
+        <a href="#" style="color: var(--text-secondary)"
+          ><i class="fab fa-linkedin"></i
+        ></a>
+      </div>
+    </footer>
+
+    <script>
+      function setLoginMode(modeOverride) {
+        const params = new URLSearchParams(window.location.search);
+        const mode = modeOverride || params.get("mode") || "patient";
+        const patientSection = document.getElementById("patientSection");
+        const staffSection = document.getElementById("staffSection");
+        if (!patientSection || !staffSection) return;
+
+        if (mode === "staff") {
+          staffSection.classList.add("active");
+          patientSection.classList.remove("active");
+        } else {
+          patientSection.classList.add("active");
+          staffSection.classList.remove("active");
+        }
+      }
+      document.addEventListener("DOMContentLoaded", () => setLoginMode());
+    </script>
+    <script>
+      async function connectWalletAndLogin() {
+        if (!window.ethereum) {
+          alert("Cần cài MetaMask để tiếp tục!");
+          return;
+        }
+
+        try {
+          const accounts = await window.ethereum.request({
+            method: "eth_requestAccounts",
+          });
+          if (accounts && accounts.length > 0) {
+            const walletAddress = accounts[0];
+            const response = await fetch("/api/login-wallet", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ walletAddress }),
+            });
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+              alert(result.message || "Ví không được phép đăng nhập");
+              return;
+            }
+
+            localStorage.setItem("healthchain_wallet_connected", "1");
+            localStorage.setItem("healthchain_wallet_address", walletAddress);
+            sessionStorage.setItem("healthchain_logged_in", "1");
+            sessionStorage.setItem("healthchain_role", "doctor");
+            if (result && result.doctor && result.doctor.fullName) {
+              sessionStorage.setItem(
+                "healthchain_user_name",
+                result.doctor.fullName,
+              );
+            }
+            window.location.href = "/";
+          }
+        } catch (error) {
+          if (error && error.code === 4001) {
+            return;
+          }
+          console.error(error);
+          alert("Không thể kết nối ví. Vui lòng thử lại.");
+        }
+      }
+
+      const loginWalletBtn = document.getElementById("loginWalletBtn");
+      if (loginWalletBtn) {
+        loginWalletBtn.addEventListener("click", connectWalletAndLogin);
+      }
+
+      const landingConnectWalletBtn = document.getElementById(
+        "landingConnectWalletBtn",
+      );
+      if (landingConnectWalletBtn) {
+        landingConnectWalletBtn.addEventListener("click", () => {
+          const url = new URL(window.location.href);
+          url.searchParams.set("mode", "staff");
+          window.history.replaceState(null, "", url.toString());
+          setLoginMode("staff");
+        });
+      }
+
+      const patientLoginForm = document.getElementById("patientLoginForm");
+      if (patientLoginForm) {
+        patientLoginForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const cccd = document
+            .getElementById("patientCccdInput")
+            ?.value?.trim();
+          if (!cccd) return;
+
+          try {
+            const response = await fetch(
+              `/api/search-patient?query=${encodeURIComponent(cccd)}`,
+            );
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+              throw new Error(result.message || "Tra cứu thất bại");
+            }
+
+            if (!result.patient) {
+              alert("Không tìm thấy bệnh nhân với CCCD này.");
+              return;
+            }
+
+            sessionStorage.setItem("healthchain_logged_in", "1");
+            sessionStorage.setItem("healthchain_role", "patient");
+            window.location.href = `/patient/${cccd}?role=patient`;
+          } catch (error) {
+            console.error(error);
+            alert(error.message || "Tra cứu thất bại");
+          }
+        });
+      }
+
+      const adminLoginForm = document.getElementById("adminLoginForm");
+      if (adminLoginForm) {
+        adminLoginForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = document
+            .getElementById("adminEmailInput")
+            ?.value?.trim();
+          const password = document.getElementById("adminPasswordInput")?.value;
+          if (!email || !password) return;
+
+          try {
+            const response = await fetch("/api/login-admin", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, password }),
+            });
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+              alert(result.message || "Đăng nhập thất bại");
+              return;
+            }
+
+            localStorage.removeItem("healthchain_wallet_connected");
+            localStorage.removeItem("healthchain_wallet_address");
+            sessionStorage.setItem("healthchain_logged_in", "1");
+            sessionStorage.setItem("healthchain_role", "admin");
+            if (result && result.admin && result.admin.fullName) {
+              sessionStorage.setItem(
+                "healthchain_user_name",
+                result.admin.fullName,
+              );
+            }
+            window.location.href = "/";
+          } catch (error) {
+            console.error(error);
+            alert("Không thể đăng nhập. Vui lòng thử lại.");
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

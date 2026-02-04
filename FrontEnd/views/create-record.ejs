@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/create-record.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <%- include('partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('partials/header') %>
+
+      <div class="create-container">
+        <div class="visit-form-panel">
+          <h2 class="section-title">
+            <i class="fas fa-notes-medical"></i> Thông Tin Khám Bệnh
+          </h2>
+
+          <form id="medical-form">
+            <input id="patientCccdHidden" type="hidden" />
+            <div
+              id="medicalFormNotice"
+              style="
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px dashed var(--border-color);
+                color: var(--text-secondary);
+                padding: 12px 14px;
+                border-radius: 8px;
+                margin-bottom: 1.25rem;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+              "
+            >
+              <i
+                class="fas fa-user-check"
+                style="color: var(--accent-cyan)"
+              ></i>
+              Vui lòng tra cứu bệnh nhân trước khi nhập Thông Tin Khám Bệnh.
+            </div>
+
+            <fieldset
+              id="medicalFormFieldset"
+              disabled
+              style="border: none; padding: 0; margin: 0"
+            >
+              <h3
+                style="
+                  color: var(--accent-green);
+                  margin: 0 0 1rem;
+                  font-size: 1rem;
+                "
+              >
+                Chỉ Số Sinh Mệnh (Cập nhật mới)
+              </h3>
+              <div class="patient-form-grid" style="margin-bottom: 1.25rem">
+                <div class="form-group">
+                  <label>Chiều Cao (cm)</label>
+                  <input
+                    id="newHeightInput"
+                    type="number"
+                    class="form-control"
+                    placeholder="170"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Cân Nặng (kg)</label>
+                  <input
+                    id="newWeightInput"
+                    type="number"
+                    class="form-control"
+                    placeholder="65"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Huyết Áp (mmHg)</label>
+                  <input
+                    id="newBloodPressureInput"
+                    type="text"
+                    class="form-control"
+                    placeholder="120/80"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Nhịp Tim (bpm)</label>
+                  <input
+                    id="newHeartRateInput"
+                    type="number"
+                    class="form-control"
+                    placeholder="75"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 1.5rem">
+                <label>Bổ sung tiền sử bệnh án (nếu có)</label>
+                <textarea
+                  id="medicalHistoryAppendInput"
+                  class="form-control"
+                  rows="3"
+                  placeholder="Ví dụ: Mất ngủ"
+                ></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Triệu chứng lâm sàng</label>
+                <textarea
+                  id="symptomsInput"
+                  class="form-control"
+                  rows="3"
+                  placeholder="Mô tả triệu chứng..."
+                ></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Chẩn đoán sơ bộ</label>
+                <input
+                  id="diagnosisInput"
+                  type="text"
+                  class="form-control"
+                  placeholder="Nhập chẩn đoán..."
+                />
+              </div>
+
+              <div class="form-group">
+                <label>Chỉ định cận lâm sàng (X-Quang, CT...)</label>
+                <textarea
+                  id="clinicalIndicationsInput"
+                  class="form-control"
+                  rows="2"
+                  placeholder="Các chỉ định..."
+                ></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Phương pháp điều trị</label>
+                <textarea
+                  id="treatmentPlanInput"
+                  class="form-control"
+                  rows="3"
+                  placeholder="Phác đồ điều trị..."
+                ></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Đơn thuốc</label>
+                <div
+                  class="medication-table-wrapper"
+                  style="
+                    background: rgba(255, 255, 255, 0.05);
+                    border-radius: 8px;
+                    padding: 10px;
+                    border: 1px solid var(--border-color);
+                  "
+                >
+                  <table
+                    id="medicationTable"
+                    style="
+                      width: 100%;
+                      border-collapse: separate;
+                      border-spacing: 0 5px;
+                    "
+                  >
+                    <thead>
+                      <tr style="text-align: left">
+                        <th
+                          style="
+                            padding: 10px;
+                            color: var(--text-secondary);
+                            width: 40%;
+                            font-size: 0.9rem;
+                          "
+                        >
+                          Tên thuốc
+                        </th>
+                        <th
+                          style="
+                            padding: 10px;
+                            color: var(--text-secondary);
+                            width: 25%;
+                            font-size: 0.9rem;
+                          "
+                        >
+                          Liều lượng
+                        </th>
+                        <th
+                          style="
+                            padding: 10px;
+                            color: var(--text-secondary);
+                            width: 25%;
+                            font-size: 0.9rem;
+                          "
+                        >
+                          Cách dùng
+                        </th>
+                        <th style="width: 10%"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style="padding: 5px">
+                          <input
+                            type="text"
+                            class="form-control med-name"
+                            placeholder="Tên thuốc..."
+                            style="
+                              margin-bottom: 0;
+                              background: rgba(0, 0, 0, 0.2);
+                            "
+                          />
+                        </td>
+                        <td style="padding: 5px">
+                          <input
+                            type="text"
+                            class="form-control med-dose"
+                            placeholder="Liều lượng..."
+                            style="
+                              margin-bottom: 0;
+                              background: rgba(0, 0, 0, 0.2);
+                            "
+                          />
+                        </td>
+                        <td style="padding: 5px">
+                          <input
+                            type="text"
+                            class="form-control med-usage"
+                            placeholder="Cách dùng..."
+                            style="
+                              margin-bottom: 0;
+                              background: rgba(0, 0, 0, 0.2);
+                            "
+                          />
+                        </td>
+                        <td style="text-align: center">
+                          <i
+                            class="fas fa-trash"
+                            style="
+                              color: #ef4444;
+                              cursor: pointer;
+                              opacity: 0.5;
+                            "
+                            onclick="deleteRow(this)"
+                            onmouseover="this.style.opacity = 1"
+                            onmouseout="this.style.opacity = 0.5"
+                          ></i>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <button
+                    type="button"
+                    onclick="addMedicationRow()"
+                    style="
+                      margin-top: 10px;
+                      background: transparent;
+                      border: 1px dashed var(--accent-cyan);
+                      color: var(--accent-cyan);
+                      padding: 8px 15px;
+                      border-radius: 4px;
+                      cursor: pointer;
+                      width: 100%;
+                      transition: all 0.3s;
+                    "
+                    onmouseover="
+                      this.style.background = 'rgba(52, 152, 219, 0.1)'
+                    "
+                    onmouseout="this.style.background = 'transparent'"
+                  >
+                    <i class="fas fa-plus"></i> Thêm thuốc
+                  </button>
+                </div>
+              </div>
+
+              <script>
+                function addMedicationRow() {
+                  const table = document
+                    .getElementById("medicationTable")
+                    .getElementsByTagName("tbody")[0];
+                  const newRow = table.insertRow();
+                  newRow.innerHTML = `
+                    <td style="padding: 5px;"><input type="text" class="form-control med-name" placeholder="Tên thuốc..." style="margin-bottom:0; background: rgba(0,0,0,0.2);"></td>
+                    <td style="padding: 5px;"><input type="text" class="form-control med-dose" placeholder="Liều lượng..." style="margin-bottom:0; background: rgba(0,0,0,0.2);"></td>
+                    <td style="padding: 5px;"><input type="text" class="form-control med-usage" placeholder="Cách dùng..." style="margin-bottom:0; background: rgba(0,0,0,0.2);"></td>
+                        <td style="text-align: center;"><i class="fas fa-trash" style="color: #ef4444; cursor: pointer; opacity: 0.5;" onclick="deleteRow(this)" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5"></i></td>
+                `;
+                }
+
+                function deleteRow(btn) {
+                  const row = btn.parentNode.parentNode;
+                  if (
+                    document.querySelectorAll("#medicationTable tbody tr")
+                      .length > 1
+                  ) {
+                    row.parentNode.removeChild(row);
+                  } else {
+                    // Clear inputs if it's the last row
+                    const inputs = row.querySelectorAll("input");
+                    inputs.forEach((input) => (input.value = ""));
+                  }
+                }
+              </script>
+
+              <div
+                class="form-actions"
+                style="display: flex; gap: 15px; margin-top: 2rem"
+              >
+                <button
+                  type="button"
+                  class="btn-sign-blockchain"
+                  onclick="simulateSign()"
+                  style="
+                    flex: 1;
+                    padding: 1rem;
+                    background: linear-gradient(
+                      135deg,
+                      #00f260 0%,
+                      #0575e6 100%
+                    );
+                    border: none;
+                    color: white;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-weight: 600;
+                    box-shadow: 0 4px 15px rgba(5, 117, 230, 0.4);
+                    transition: all 0.3s;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                  "
+                  onmouseover="
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 6px 20px rgba(5, 117, 230, 0.6)';
+                  "
+                  onmouseout="
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 4px 15px rgba(5, 117, 230, 0.4)';
+                  "
+                >
+                  <i class="fas fa-file-signature"></i> Ký Lưu
+                </button>
+              </div>
+
+              <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+
+              <script>
+                // Server đã gửi dữ liệu xuống dưới dạng JSON String
+                const CONTRACT_ADDRESS = "<%= contractAddress %>";
+
+                // SỬA: Bỏ JSON.parse và dấu nháy kép đi, để EJS in thẳng Object vào
+                const CONTRACT_ABI = <%- contractABI %>;
+
+                async function simulateSign() {
+                  const btn = document.querySelector(".btn-sign-blockchain");
+                  const originalText = btn.innerHTML;
+
+                  try {
+                    if (!window.ethereum) return alert("❌ Hãy cài ví MetaMask!");
+
+                    // Chuyển mạng Cronos Testnet
+                    try {
+                      await window.ethereum.request({
+                        method: "wallet_switchEthereumChain",
+                        params: [{ chainId: "0x152" }], // 338
+                      });
+                    } catch (e) {
+                      console.warn("Chưa chuyển mạng hoặc đã ở đúng mạng");
+                    }
+
+                    const confirmAction = confirm(
+                      "Xác nhận lưu hồ sơ và ký Blockchain?",
+                    );
+                    if (!confirmAction) return;
+
+                    btn.innerHTML =
+                      '<i class="fas fa-circle-notch fa-spin"></i> Đang xử lý...';
+                    btn.disabled = true;
+
+                    // 1. Lưu vào MongoDB
+                    const diagnosis =
+                      document.getElementById("diagnosisInput")?.value || "N/A";
+                    const symptoms =
+                      document.getElementById("symptomsInput")?.value || "N/A";
+                    const patientCCCD = document.getElementById(
+                      "patientCccdHidden",
+                    )?.value;
+                    if (!patientCCCD) {
+                      alert("Vui lòng tra cứu và chọn bệnh nhân trước khi ký lưu.");
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                      return;
+                    }
+                    const rawHeight =
+                      document.getElementById("newHeightInput")?.value || "";
+                    const rawWeight =
+                      document.getElementById("newWeightInput")?.value || "";
+                    const rawBloodPressure =
+                      document
+                        .getElementById("newBloodPressureInput")
+                        ?.value?.trim() || "";
+                    const rawHeartRate =
+                      document.getElementById("newHeartRateInput")?.value || "";
+
+                    const vitalsUpdate = {};
+                    if (rawHeight !== "") {
+                      const heightValue = Number(rawHeight);
+                      if (!Number.isNaN(heightValue)) {
+                        vitalsUpdate.heightCm = heightValue;
+                      }
+                    }
+                    if (rawWeight !== "") {
+                      const weightValue = Number(rawWeight);
+                      if (!Number.isNaN(weightValue)) {
+                        vitalsUpdate.weightKg = weightValue;
+                      }
+                    }
+                    if (rawBloodPressure !== "") {
+                      vitalsUpdate.bloodPressure = rawBloodPressure;
+                    }
+                    if (rawHeartRate !== "") {
+                      const heartRateValue = Number(rawHeartRate);
+                      if (!Number.isNaN(heartRateValue)) {
+                        vitalsUpdate.heartRate = heartRateValue;
+                      }
+                    }
+                    const hasVitalsUpdate =
+                      Object.keys(vitalsUpdate).length > 0;
+                    const vitalsPayload = hasVitalsUpdate ? vitalsUpdate : null;
+                    const medicalHistoryAppend =
+                      document
+                        .getElementById("medicalHistoryAppendInput")
+                        ?.value?.trim() || "";
+                    const clinicalIndications =
+                      document
+                        .getElementById("clinicalIndicationsInput")
+                        ?.value?.trim() || "";
+                    const treatmentPlan =
+                      document.getElementById("treatmentPlanInput")?.value?.trim() || "";
+                    const medications = Array.from(
+                      document.querySelectorAll("#medicationTable tbody tr"),
+                    )
+                      .map((row) => {
+                        const name = row.querySelector(".med-name")?.value?.trim() || "";
+                        const dose = row.querySelector(".med-dose")?.value?.trim() || "";
+                        const usage = row.querySelector(".med-usage")?.value?.trim() || "";
+                        if (!name && !dose && !usage) return null;
+                        return { name, dose, usage };
+                      })
+                      .filter(Boolean);
+
+                    const doctorName =
+                      sessionStorage.getItem("healthchain_user_name") || "";
+                    const walletAddress =
+                      localStorage.getItem("healthchain_wallet_address") || "";
+
+                    const response = await fetch("/api/create-record", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        diagnosis,
+                        symptoms,
+                        patientCCCD,
+                        doctorName,
+                        walletAddress,
+                        vitalsUpdate: vitalsPayload,
+                        medicalHistoryAppend,
+                        clinicalIndications,
+                        treatmentPlan,
+                        medications,
+                      }),
+                    });
+
+                    const result = await response.json();
+                    if (!result.success) throw new Error(result.message);
+                    const recordId = result.id;
+                    console.log("✅ Đã lưu MongoDB ID:", recordId);
+
+                    // 2. Chuẩn bị dữ liệu IPFS + AES
+                    const prepareResponse = await fetch("/api/prepare-chain-record", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ recordId }),
+                    });
+
+                    const prepareResult = await prepareResponse.json();
+                    if (!prepareResult.success) {
+                      throw new Error(prepareResult.message || "Không chuẩn bị được dữ liệu");
+                    }
+
+                    const cid = prepareResult.cid;
+                    const patientKey = prepareResult.patientKey;
+
+                    // 3. Ký Blockchain
+                    const provider = new ethers.providers.Web3Provider(
+                      window.ethereum,
+                    );
+                    await provider.send("eth_requestAccounts", []);
+                    const signer = provider.getSigner();
+                    const contract = new ethers.Contract(
+                      CONTRACT_ADDRESS,
+                      CONTRACT_ABI,
+                      signer,
+                    );
+
+                    // Gửi giao dịch
+                    const tx = await contract.storeRecord(recordId, cid, patientKey);
+                    alert("Đang gửi lên Blockchain... Vui lòng đợi!");
+
+                    await tx.wait(); // Đợi đào xong
+
+                    // Đồng bộ lại dữ liệu on-chain về DB
+                    await fetch("/api/update-hash", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        recordId: recordId,
+                        cid: cid,
+                        txHash: tx.hash,
+                        patientKey: patientKey,
+                      }),
+                    });
+
+                    alert("🎉 THÀNH CÔNG!\nCID: " + cid);
+                    window.location.href = "/patients";
+                  } catch (error) {
+                    console.error(error);
+                    alert("❌ Lỗi: " + (error.reason || error.message));
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                  }
+                }
+              </script>
+            </fieldset>
+          </form>
+        </div>
+
+        <div
+          class="patient-layout-panel"
+          style="
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            height: 100%;
+          "
+        >
+          <div class="search-section">
+            <h2 class="section-title">
+              <i class="fas fa-search"></i> Tra Cứu Bệnh Nhân
+            </h2>
+            <div class="form-group">
+              <label>Nhập CCCD hoặc Số Điện Thoại</label>
+              <div style="display: flex; gap: 10px">
+                <input
+                  type="text"
+                  id="searchInput"
+                  class="form-control"
+                  placeholder="Ví dụ: 0123456789"
+                />
+                <button
+                  class="btn-search"
+                  style="width: auto; margin-top: 0"
+                  type="button"
+                  onclick="handleSearch()"
+                >
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+              <div style="margin-top: 10px; text-align: right">
+                <a
+                  href="/create-patient"
+                  style="
+                    color: var(--accent-cyan);
+                    text-decoration: none;
+                    font-size: 0.9rem;
+                  "
+                >
+                  <i class="fas fa-plus"></i> Tạo hồ sơ bệnh nhân mới
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="history-section">
+            <h2 class="section-title">
+              <i class="fas fa-history"></i> Lịch Sử Khám Bệnh
+            </h2>
+
+            <div
+              id="initialState"
+              style="
+                text-align: center;
+                color: var(--text-secondary);
+                margin-top: 2rem;
+              "
+            >
+              <p>Vui lòng nhập CCCD/SĐT để xem lịch sử và mở phần khám bệnh.</p>
+            </div>
+
+            <div
+              id="patientInfoCard"
+              style="
+                display: none;
+                background: rgba(255, 255, 255, 0.04);
+                border: 1px solid var(--border-color);
+                border-radius: 10px;
+                padding: 14px;
+                margin-top: 1.25rem;
+              "
+            >
+              <div style="font-weight: 600; margin-bottom: 10px">
+                <i class="fas fa-user"></i> Thông Tin Bệnh Nhân
+              </div>
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: repeat(2, minmax(0, 1fr));
+                  gap: 10px 14px;
+                  font-size: 0.9rem;
+                "
+              >
+                <div>
+                  <strong>Họ và Tên:</strong> <span id="patientName">---</span>
+                </div>
+                <div>
+                  <strong>CCCD:</strong> <span id="patientCccd">---</span>
+                </div>
+                <div>
+                  <strong>Ngày Sinh:</strong> <span id="patientDob">---</span>
+                </div>
+                <div>
+                  <strong>Số ĐT:</strong> <span id="patientPhone">---</span>
+                </div>
+                <div style="grid-column: 1 / -1">
+                  <strong>Địa Chỉ:</strong> <span id="patientAddress">---</span>
+                </div>
+                <div style="grid-column: 1 / -1">
+                  <strong>Chỉ số sinh mệnh:</strong>
+                  <span id="patientVitals">---</span>
+                </div>
+                <div style="grid-column: 1 / -1">
+                  <strong>Tiền sử bệnh án:</strong>
+                  <span id="patientHistory">---</span>
+                </div>
+              </div>
+            </div>
+
+            <div
+              id="historyList"
+              class="history-list"
+              style="display: none"
+            ></div>
+
+            <div id="notFoundState" class="not-found-state">
+              <div
+                style="
+                  font-size: 3rem;
+                  color: var(--text-secondary);
+                  margin-bottom: 1rem;
+                "
+              >
+                <i class="fas fa-user-slash"></i>
+              </div>
+              <p class="not-found-text">
+                Không tìm thấy bệnh nhân với thông tin cung cấp.
+              </p>
+              <a href="/create-patient" class="btn-create-patient">
+                <i class="fas fa-user-plus"></i> Tạo Mới Hồ Sơ Bệnh Nhân
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      async function handleSearch() {
+        const input = document.getElementById("searchInput").value.trim();
+        const initialState = document.getElementById("initialState");
+        const historyList = document.getElementById("historyList");
+        const notFoundState = document.getElementById("notFoundState");
+        const patientInfoCard = document.getElementById("patientInfoCard");
+        const medicalFormFieldset = document.getElementById(
+          "medicalFormFieldset",
+        );
+        const medicalFormNotice = document.getElementById("medicalFormNotice");
+        const patientCccdHidden = document.getElementById("patientCccdHidden");
+
+        // Reset all
+        initialState.style.display = "none";
+        historyList.style.display = "none";
+        notFoundState.style.display = "none";
+        patientInfoCard.style.display = "none";
+        historyList.innerHTML = "";
+        if (patientCccdHidden) patientCccdHidden.value = "";
+
+        if (!input) {
+          initialState.style.display = "block";
+          if (medicalFormFieldset) medicalFormFieldset.disabled = true;
+          if (medicalFormNotice) medicalFormNotice.style.display = "flex";
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            `/api/search-patient?query=${encodeURIComponent(input)}`,
+          );
+          const result = await response.json();
+
+          if (!response.ok || !result.success) {
+            throw new Error(result.message || "Tra cứu thất bại");
+          }
+
+          if (!result.patient) {
+            notFoundState.style.display = "block";
+            if (medicalFormFieldset) medicalFormFieldset.disabled = true;
+            if (medicalFormNotice) medicalFormNotice.style.display = "flex";
+            return;
+          }
+
+          document.getElementById("patientName").innerText =
+            result.patient.fullName || "---";
+          document.getElementById("patientCccd").innerText =
+            result.patient.cccd || "---";
+          document.getElementById("patientDob").innerText =
+            result.patient.birthDate || "---";
+          document.getElementById("patientPhone").innerText =
+            result.patient.phone || "---";
+          document.getElementById("patientAddress").innerText =
+            result.patient.address || "---";
+          const vitals = result.patient.vitalSigns || {};
+          const vitalsParts = [];
+          if (vitals.heightCm)
+            vitalsParts.push(`Chiều cao: ${vitals.heightCm} cm`);
+          if (vitals.weightKg)
+            vitalsParts.push(`Cân nặng: ${vitals.weightKg} kg`);
+          if (vitals.bloodPressure)
+            vitalsParts.push(`Huyết áp: ${vitals.bloodPressure}`);
+          if (vitals.heartRate)
+            vitalsParts.push(`Nhịp tim: ${vitals.heartRate} bpm`);
+          document.getElementById("patientVitals").innerText =
+            vitalsParts.length > 0 ? vitalsParts.join(" | ") : "Chưa có";
+          document.getElementById("patientHistory").innerText =
+            result.patient.medicalHistory || "Chưa có";
+          if (patientCccdHidden) patientCccdHidden.value = result.patient.cccd;
+
+          patientInfoCard.style.display = "block";
+
+          if (result.records && result.records.length > 0) {
+            historyList.style.display = "flex";
+            historyList.innerHTML = result.records
+              .map((rec) => {
+                const date = rec.visitDate
+                  ? new Date(rec.visitDate).toLocaleString("vi-VN")
+                  : "N/A";
+                return `
+                  <div class="history-item" onclick="window.location.href = '/record/${
+                    rec.recordId
+                  }'">
+                    <div class="history-date">${date}</div>
+                    <div class="history-diagnosis">${
+                      rec.diagnosis || "Chưa có"
+                    }</div>
+                    <div class="history-meta">${rec.doctorName || "N/A"}</div>
+                  </div>
+                `;
+              })
+              .join("");
+          } else {
+            historyList.style.display = "block";
+            historyList.innerHTML =
+              '<div style="text-align:center;color:var(--text-secondary);padding:12px;">Chưa có lịch sử khám bệnh.</div>';
+          }
+
+          if (medicalFormFieldset) medicalFormFieldset.disabled = false;
+          if (medicalFormNotice) medicalFormNotice.style.display = "none";
+        } catch (error) {
+          console.error(error);
+          alert(error.message || "Tra cứu thất bại");
+          notFoundState.style.display = "block";
+          if (medicalFormFieldset) medicalFormFieldset.disabled = true;
+          if (medicalFormNotice) medicalFormNotice.style.display = "flex";
+        }
+      }
+    </script>
+  </body>
+</html>

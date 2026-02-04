@@ -1,0 +1,349 @@
+<header class="header">
+  <div class="page-title">
+    <h2 style="font-weight: 600"><%= title %></h2>
+  </div>
+  <div class="user-profile">
+    <link rel="stylesheet" href="/css/header-features.css">
+    
+        <% if (typeof hideNotifications === 'undefined' || !hideNotifications) { %>
+        <div class="notifications" style="position: relative;" onclick="toggleDropdown('notifDropdown')">
+      <i
+        class="fas fa-bell"
+        style="color: var(--text-secondary); cursor: pointer; font-size: 1.2rem; transition: color 0.3s;"
+        onmouseover="this.style.color='var(--accent-cyan)'"
+        onmouseout="this.style.color='var(--text-secondary)'"
+      ></i>
+    <span class="notification-badge">0</span>
+      
+      <!-- Notification Dropdown -->
+      <div id="notifDropdown" class="dropdown-menu">
+        <div class="dropdown-header">Thông báo mới</div>
+        <div class="dropdown-item" style="justify-content: center; color: var(--text-secondary);">
+            Chưa có thông báo từ hệ thống
+        </div>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- Connect Wallet Button -->
+    <% if (typeof hideWallet === 'undefined' || !hideWallet) { %>
+    <div style="margin-right: 15px;">
+        <button id="connectWalletBtn" onclick="toggleWallet()" class="btn-wallet-connect">
+            <i class="fas fa-wallet"></i> Connect Wallet
+        </button>
+    </div>
+    <% } %>
+
+    <% if (typeof hideUserMenu === 'undefined' || !hideUserMenu) { %>
+    <div class="user-profile" style="position: relative;">
+        <!-- Text Avatar -->
+        <div class="avatar-text" onclick="toggleDropdown('userDropdown')">A</div>
+        
+        <div class="user-info" onclick="toggleDropdown('userDropdown')" style="cursor: pointer;">
+            <div id="userNameLabel" style="font-weight: bold">Admin User</div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary)">
+                <span id="userRoleLabel">Quản trị viên</span> <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i>
+            </div>
+        </div>
+
+        <!-- User Dropdown -->
+        <div id="userDropdown" class="dropdown-menu" style="width: 280px;">
+            <div class="dropdown-header">Cài đặt tài khoản</div>
+            
+            <a href="#" class="dropdown-item" onclick="changeAvatar()">
+                <i class="fas fa-camera"></i> Đổi ảnh đại diện
+            </a>
+            
+            <div class="dropdown-item" onclick="toggleTheme()">
+                <i class="fas fa-adjust"></i> 
+                <span>Giao diện: <span id="themeLabel">Tối</span></span>
+            </div>
+
+            <a href="/accounts" class="dropdown-item" style="color: var(--accent-green);" id="accountsDropdownItem">
+                <i class="fas fa-users-cog"></i> Quản lý tài khoản
+            </a>
+            
+            <div class="dropdown-divider"></div>
+            
+            <a href="/logout" class="dropdown-item" style="color: #ef4444;" onclick="return handleLogout(event)">
+                <i class="fas fa-sign-out-alt"></i> Đăng xuất
+            </a>
+        </div>
+    </div>
+    <% } %>
+</header>
+
+<script>
+    (function enforceLogin() {
+        try {
+            const path = window.location.pathname || "";
+            if (path !== "/login") {
+                const isLoggedIn = sessionStorage.getItem("healthchain_logged_in") === "1";
+                if (!isLoggedIn) {
+                    window.location.href = "/login";
+                }
+                const role = sessionStorage.getItem("healthchain_role") || "";
+                if (path === "/accounts" && role !== "admin") {
+                    window.location.href = "/";
+                }
+                if (role === "admin") {
+                    const btn = document.getElementById("connectWalletBtn");
+                    if (btn) btn.style.display = "none";
+                    localStorage.removeItem("healthchain_wallet_connected");
+                    localStorage.removeItem("healthchain_wallet_address");
+                }
+                if (role !== "admin") {
+                    const accItem = document.getElementById("accountsDropdownItem");
+                    if (accItem) accItem.style.display = "none";
+                }
+                const nameLabel = document.getElementById("userNameLabel");
+                const roleLabel = document.getElementById("userRoleLabel");
+                const displayName = sessionStorage.getItem("healthchain_user_name") || "";
+                if (nameLabel && displayName) {
+                    nameLabel.textContent = displayName;
+                }
+                if (roleLabel) {
+                    if (role === "admin") roleLabel.textContent = "Quản trị viên";
+                    else if (role === "doctor") roleLabel.textContent = "Bác sĩ";
+                }
+            }
+        } catch (e) {
+            // no-op
+        }
+    })();
+
+    function toggleDropdown(id) {
+        // Close others first
+        const all = document.querySelectorAll('.dropdown-menu');
+        all.forEach(d => {
+            if(d.id !== id) d.classList.remove('show');
+        });
+        
+        const el = document.getElementById(id);
+        el.classList.toggle('show');
+    }
+
+    // Close when clicking outside
+    window.onclick = function(event) {
+        if (!event.target.matches('.fas, .avatar-text, .user-info *, .notifications *')) {
+            const dropdowns = document.getElementsByClassName("dropdown-menu");
+            for (let i = 0; i < dropdowns.length; i++) {
+                if (dropdowns[i].classList.contains('show')) {
+                    dropdowns[i].classList.remove('show');
+                }
+            }
+        }
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle('light-mode');
+        const isLight = document.body.classList.contains('light-mode');
+        document.getElementById('themeLabel').innerText = isLight ? 'Sáng' : 'Tối';
+        localStorage.setItem('healthchain_theme', isLight ? 'light' : 'dark');
+    }
+
+    function changeAvatar() {
+        const newInitials = prompt("Nhập chữ cái đại diện mới (1-2 ký tự):", "B");
+        if(newInitials) {
+            document.querySelector('.avatar-text').innerText = newInitials.substring(0,2).toUpperCase();
+        }
+    }
+
+    function handleLogout(event) {
+        if (event) event.preventDefault();
+        try {
+            sessionStorage.removeItem("healthchain_logged_in");
+            sessionStorage.removeItem("healthchain_role");
+            sessionStorage.removeItem("healthchain_user_name");
+            sessionStorage.removeItem("healthchain_patient_cccd");
+            localStorage.removeItem("healthchain_wallet_connected");
+            localStorage.removeItem("healthchain_wallet_address");
+        } catch (e) {
+            // no-op
+        }
+        window.location.href = "/logout";
+        return false;
+    }
+
+    // Load theme on start
+    (function() {
+        const savedTheme = localStorage.getItem('healthchain_theme');
+        if(savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+            const label = document.getElementById('themeLabel');
+            if(label) label.innerText = 'Sáng';
+        }
+    })();
+
+    // --- Wallet Logic (MetaMask) ---
+    const HIDE_WALLET = <%= (typeof hideWallet !== 'undefined' && hideWallet) ? 'true' : 'false' %>;
+    let isConnected = false;
+    let currentAccount = "";
+
+    function shortAddress(addr) {
+        if (!addr || addr.length < 10) return addr || "";
+        return `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
+    }
+
+    function setConnected(address) {
+        const btn = document.getElementById("connectWalletBtn");
+        isConnected = true;
+        currentAccount = address || "";
+        localStorage.setItem("healthchain_wallet_connected", "1");
+        localStorage.setItem("healthchain_wallet_address", currentAccount);
+        if (btn) {
+            btn.innerHTML = `<i class="fas fa-check-circle"></i> ${shortAddress(currentAccount)}`;
+            btn.classList.add("connected");
+            btn.title = `Connected: ${currentAccount}`;
+        }
+    }
+
+    function setDisconnected() {
+        const btn = document.getElementById("connectWalletBtn");
+        isConnected = false;
+        currentAccount = "";
+        localStorage.removeItem("healthchain_wallet_connected");
+        localStorage.removeItem("healthchain_wallet_address");
+        if (btn) {
+            btn.innerHTML = '<i class="fas fa-wallet"></i> Connect Wallet';
+            btn.classList.remove("connected");
+            btn.title = "";
+        }
+    }
+
+    async function connectWallet() {
+        if (!window.ethereum) {
+            alert("Cần cài MetaMask để tiếp tục!");
+            return;
+        }
+        const btn = document.getElementById("connectWalletBtn");
+        if (btn) {
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Connecting...';
+        }
+        try {
+            const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+            handleAccountsChanged(accounts);
+        } catch (error) {
+            if (error && error.code === 4001) {
+                // User rejected request
+                if (!isConnected) setDisconnected();
+                return;
+            }
+            console.error(error);
+            alert("Không thể kết nối ví. Vui lòng thử lại.");
+            if (!isConnected) setDisconnected();
+        }
+    }
+
+    function toggleWallet() {
+        if (HIDE_WALLET) return;
+        if (!isConnected) {
+            window.location.href = "/login?mode=staff";
+            return;
+        }
+        const shouldDisconnect = confirm("Bạn có muốn ngắt kết nối ví không?");
+        if (shouldDisconnect) {
+            setDisconnected();
+        }
+    }
+
+    function handleAccountsChanged(accounts) {
+        const role = sessionStorage.getItem("healthchain_role") || "";
+        const isLoggedIn = sessionStorage.getItem("healthchain_logged_in") === "1";
+        const savedAddress = localStorage.getItem("healthchain_wallet_address") || "";
+        if (!accounts || accounts.length === 0) {
+            setDisconnected();
+            if (role === "doctor" && isLoggedIn) {
+                sessionStorage.removeItem("healthchain_logged_in");
+                sessionStorage.removeItem("healthchain_role");
+                sessionStorage.removeItem("healthchain_user_name");
+                window.location.href = "/login";
+            }
+            return;
+        }
+        const nextAccount = accounts[0];
+        if (
+            role === "doctor" &&
+            isLoggedIn &&
+            savedAddress &&
+            savedAddress.toLowerCase() !== nextAccount.toLowerCase()
+        ) {
+            setDisconnected();
+            sessionStorage.removeItem("healthchain_logged_in");
+            sessionStorage.removeItem("healthchain_role");
+            sessionStorage.removeItem("healthchain_user_name");
+            window.location.href = "/login";
+            return;
+        }
+        setConnected(nextAccount);
+    }
+
+    async function checkWalletConnection() {
+        if (!window.ethereum) {
+            setDisconnected();
+            return;
+        }
+        try {
+            const accounts = await window.ethereum.request({ method: "eth_accounts" });
+            handleAccountsChanged(accounts);
+        } catch (error) {
+            console.error(error);
+            setDisconnected();
+        }
+    }
+
+    (function initWalletLock() {
+        if (HIDE_WALLET) return;
+        const savedAddress = localStorage.getItem("healthchain_wallet_address");
+        const savedConnected = localStorage.getItem("healthchain_wallet_connected") === "1";
+        if (savedConnected && savedAddress) {
+            setConnected(savedAddress);
+        } else {
+            setDisconnected();
+        }
+
+        if (window.ethereum && window.ethereum.on) {
+            window.ethereum.on("accountsChanged", handleAccountsChanged);
+            window.ethereum.on("chainChanged", () => window.location.reload());
+        }
+
+        checkWalletConnection();
+    })();
+</script>
+
+<style>
+    /* Connect Wallet Button Styles */
+    .btn-wallet-connect {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        font-family: 'Segoe UI', sans-serif;
+        font-weight: 500;
+        font-size: 0.9rem;
+        position: relative;
+        z-index: 1001;
+    }
+
+    .btn-wallet-connect:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .btn-wallet-connect.connected {
+        background: rgba(46, 213, 115, 0.15);
+        border-color: #2ed573;
+        color: #2ed573;
+    }
+
+    .btn-wallet-connect.connected:hover {
+        background: rgba(46, 213, 115, 0.25);
+    }
+</style>

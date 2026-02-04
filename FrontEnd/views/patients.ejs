@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/patients.css" />
+    <link rel="stylesheet" href="/css/modal.css" />
+  </head>
+  <body>
+    <%- include('partials/sidebar') %>
+
+    <div class="main-content">
+      <%- include('partials/header') %>
+
+      <div class="page-container">
+        <div class="toolbar-container">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Tìm kiếm hồ sơ (Tên/Mã)..."
+              onkeyup="searchTable()"
+            />
+          </div>
+
+          <div class="toolbar-actions">
+            <select
+              class="date-filter"
+              id="dateFilter"
+              onchange="applyFilters()"
+            >
+              <option value="all">Tất cả thời gian</option>
+              <option value="month">Tháng này</option>
+              <option value="year-2025">Năm 2025</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-container" style="margin: 0">
+          <table id="patientsTable">
+            <thead>
+              <tr>
+                <th>Mã hồ sơ</th>
+                <th>Ngày khám</th>
+                <th>Bác sĩ phụ trách</th>
+                <th>Chẩn đoán sơ bộ</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (typeof records !== 'undefined' && records.length > 0) { %>
+              <% records.forEach(function(rec) { %>
+              <tr
+                data-doctor="<%= rec.doctor %>"
+                data-date="<%= rec.visitDateISO || '' %>"
+              >
+                <td><span class="id-pill">#<%= rec.id %></span></td>
+                <td><%= rec.date %></td>
+                <td><%= rec.doctor %></td>
+                <td><%= rec.diagnosis %></td>
+                <td>
+                  <span
+                    class="verified-badge"
+                    style="
+                      cursor: pointer;
+                      background: #f1f2f6;
+                      color: #2f3542;
+                      border: 1px solid #ced6e0;
+                      padding: 5px 10px;
+                      border-radius: 20px;
+                      font-size: 0.85rem;
+                      font-weight: 600;
+                    "
+                    onclick="openVerifyModal('<%= rec.id %>')"
+                  >
+                    <i class="fas fa-search-dollar"></i> Kiểm tra Blockchain
+                  </span>
+                </td>
+                <td>
+                  <a
+                    href="/record/<%= rec.id %>"
+                    class="btn btn-sm-outline"
+                    style="
+                      text-decoration: none;
+                      padding: 5px 10px;
+                      border: 1px solid #ddd;
+                      border-radius: 5px;
+                      color: #555;
+                    "
+                  >
+                    Xem chi tiết
+                  </a>
+                </td>
+              </tr>
+              <% }); %> <% } else { %>
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 20px">
+                  Chưa có dữ liệu
+                </td>
+              </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="verifyModal"
+      class="modal"
+      style="
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+      "
+    >
+      <div
+        class="modal-content"
+        style="
+          background-color: #fefefe;
+          margin: 10% auto;
+          padding: 20px;
+          border: 1px solid #888;
+          width: 80%;
+          max-width: 600px;
+          border-radius: 10px;
+          position: relative;
+        "
+      >
+        <div
+          class="modal-header"
+          style="
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <h2 style="margin: 0; font-size: 1.5rem">
+            <i class="fas fa-shield-alt"></i> Xác thực Blockchain
+          </h2>
+          <span
+            class="close"
+            onclick="closeVerifyModal()"
+            style="
+              color: #aaa;
+              font-size: 28px;
+              font-weight: bold;
+              cursor: pointer;
+            "
+            >&times;</span
+          >
+        </div>
+
+        <div class="modal-body">
+          <div style="margin-bottom: 20px; text-align: center">
+            <span style="color: #747d8c">Đang kiểm tra hồ sơ:</span>
+            <h3 id="modalRecordId" style="color: #2f3542; margin: 5px 0">
+              REC-???
+            </h3>
+          </div>
+
+          <div id="verifyLoading" style="text-align: center; padding: 20px">
+            <i class="fas fa-spinner fa-spin fa-3x" style="color: #3742fa"></i>
+            <p style="margin-top: 10px">Đang đối chiếu CID và đồng bộ...</p>
+          </div>
+
+          <div id="verifyResult" style="display: none">
+            <div
+              class="hash-comparison"
+              style="
+                background: #f1f2f6;
+                padding: 15px;
+                border-radius: 8px;
+                margin-bottom: 15px;
+              "
+            >
+              <div style="margin-bottom: 15px">
+                <strong style="color: #2f3542"
+                  ><i class="fas fa-calculator"></i> CID nội bộ
+                  (MongoDB):</strong
+                >
+                <code
+                  id="dbHashDisplay"
+                  style="
+                    display: block;
+                    word-break: break-all;
+                    color: #57606f;
+                    font-size: 0.9em;
+                    margin-top: 5px;
+                    background: rgba(0, 0, 0, 0.05);
+                    padding: 5px;
+                    border-radius: 4px;
+                  "
+                  >...</code
+                >
+              </div>
+              <div style="text-align: center; color: #a4b0be">
+                <i class="fas fa-arrow-down"></i> So khớp
+                <i class="fas fa-arrow-down"></i>
+              </div>
+              <div style="margin-top: 15px">
+                <strong style="color: #e1b12c"
+                  ><i class="fas fa-link"></i> CID gốc trên Blockchain:</strong
+                >
+                <code
+                  id="bcHashDisplay"
+                  style="
+                    display: block;
+                    word-break: break-all;
+                    color: #57606f;
+                    font-size: 0.9em;
+                    margin-top: 5px;
+                    background: rgba(0, 0, 0, 0.05);
+                    padding: 5px;
+                    border-radius: 4px;
+                  "
+                  >...</code
+                >
+              </div>
+            </div>
+
+            <div
+              id="statusBox"
+              style="
+                padding: 15px;
+                border-radius: 8px;
+                text-align: center;
+                border: 2px solid transparent;
+              "
+            >
+              <i
+                id="statusIcon"
+                class="fas fa-check-circle"
+                style="font-size: 2em"
+              ></i>
+              <h4 id="statusTitle" style="margin: 10px 0">KẾT QUẢ</h4>
+              <p id="statusDesc">Mô tả...</p>
+            </div>
+          </div>
+        </div>
+        <div
+          class="modal-footer"
+          style="
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            margin-top: 20px;
+            text-align: right;
+          "
+        >
+          <button
+            type="button"
+            class="btn-cancel"
+            onclick="closeVerifyModal()"
+            style="
+              padding: 8px 20px;
+              border: none;
+              background: #ff4757;
+              color: white;
+              border-radius: 5px;
+              cursor: pointer;
+            "
+          >
+            Đóng
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 1. NHẬN DỮ LIỆU TỪ SERVER
+      const DB_RECORDS = <%- JSON.stringify(records) %>;
+      const CURRENT_ROLE = sessionStorage.getItem("healthchain_role") || "";
+      const CURRENT_DOCTOR_NAME = sessionStorage.getItem("healthchain_user_name") || "";
+      const FILTERED_RECORDS =
+        CURRENT_ROLE === "doctor" && CURRENT_DOCTOR_NAME
+          ? DB_RECORDS.filter((r) => r.doctor === CURRENT_DOCTOR_NAME)
+          : DB_RECORDS;
+
+      function applyDoctorFilter() {
+        applyFilters();
+      }
+
+      // 2. HÀM KIỂM TRA
+      async function openVerifyModal(recordId) {
+        const modal = document.getElementById("verifyModal");
+        const loading = document.getElementById("verifyLoading");
+        const resultDiv = document.getElementById("verifyResult");
+
+        // Reset UI
+        document.getElementById("modalRecordId").innerText = recordId;
+        modal.style.display = "block";
+        loading.style.display = "block";
+        resultDiv.style.display = "none";
+
+        try {
+          const currentRecord = FILTERED_RECORDS.find((r) => r.id === recordId);
+          if (!currentRecord) throw new Error("Không tìm thấy dữ liệu nội bộ");
+
+          const response = await fetch("/api/verify-record", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ recordId }),
+          });
+
+          const verifyResult = await response.json();
+          if (!verifyResult.success) {
+            throw new Error(verifyResult.message || "Không xác thực được");
+          }
+
+          const onChainCid = verifyResult.cid || "";
+          const dbCid =
+            currentRecord.blockchainCid || currentRecord.dbHash || "";
+          const isMatch = dbCid && onChainCid && dbCid === onChainCid;
+
+          // HIỂN THỊ
+          loading.style.display = "none";
+          resultDiv.style.display = "block";
+
+          document.getElementById("dbHashDisplay").innerText = dbCid || "Chưa có CID";
+          document.getElementById("bcHashDisplay").innerText = onChainCid || "Không tồn tại";
+
+          const statusBox = document.getElementById("statusBox");
+          const statusIcon = document.getElementById("statusIcon");
+          const statusTitle = document.getElementById("statusTitle");
+          const statusDesc = document.getElementById("statusDesc");
+
+          if (!onChainCid) {
+            setStatus(
+              statusBox,
+              statusIcon,
+              "#ffeaa7",
+              "#d35400",
+              "fas fa-exclamation-triangle",
+            );
+            statusTitle.innerText = "CHƯA ĐỒNG BỘ";
+            statusDesc.innerText = "Hồ sơ chưa có trên Blockchain.";
+          } else if (isMatch) {
+            setStatus(
+              statusBox,
+              statusIcon,
+              "#dff9fb",
+              "#2ed573",
+              "fas fa-check-circle",
+            );
+            statusTitle.innerText = "DỮ LIỆU TOÀN VẸN";
+            statusDesc.innerText = "Tuyệt vời! CID khớp hoàn toàn.";
+          } else {
+            setStatus(
+              statusBox,
+              statusIcon,
+              "#ffdd59",
+              "#ff4757",
+              "fas fa-bug",
+            );
+            statusTitle.innerText = "CẢNH BÁO: SAI LỆCH";
+            statusDesc.innerText =
+              "Dữ liệu nội bộ đã bị thay đổi so với Blockchain!";
+          }
+        } catch (error) {
+          console.error(error);
+          loading.style.display = "none";
+          alert("Lỗi: " + error.message);
+          closeVerifyModal();
+        }
+      }
+
+      function setStatus(box, icon, bgColor, color, iconClass) {
+          box.style.background = bgColor;
+          box.style.borderColor = color;
+          box.style.color = color;
+          icon.className = iconClass;
+      }
+
+      function closeVerifyModal() {
+        document.getElementById("verifyModal").style.display = "none";
+      }
+
+      function searchTable() {
+        applyFilters();
+      }
+
+      function applyFilters() {
+        const keyword =
+          document.getElementById("searchInput")?.value?.trim().toLowerCase() || "";
+        const dateFilter =
+          document.getElementById("dateFilter")?.value || "all";
+        const now = new Date();
+
+        const rows = document.querySelectorAll("#patientsTable tbody tr");
+        let visibleCount = 0;
+        rows.forEach((row) => {
+          if (row.classList.contains("empty-row")) return;
+
+          let show = true;
+
+          if (CURRENT_ROLE === "doctor" && CURRENT_DOCTOR_NAME) {
+            const doctor = row.getAttribute("data-doctor") || "";
+            show = doctor === CURRENT_DOCTOR_NAME;
+          }
+
+          if (show && keyword) {
+            const text = row.innerText.toLowerCase();
+            show = text.includes(keyword);
+          }
+
+          if (show && dateFilter !== "all") {
+            const dateStr = row.getAttribute("data-date") || "";
+            if (!dateStr) {
+              show = false;
+            } else {
+              const d = new Date(dateStr);
+              if (dateFilter === "month") {
+                show =
+                  d.getMonth() === now.getMonth() &&
+                  d.getFullYear() === now.getFullYear();
+              } else if (dateFilter.startsWith("year-")) {
+                const year = Number(dateFilter.split("-")[1]);
+                show = d.getFullYear() === year;
+              }
+            }
+          }
+
+          row.style.display = show ? "" : "none";
+          if (show) visibleCount += 1;
+        });
+
+        const tbody = document.querySelector("#patientsTable tbody");
+        if (!tbody) return;
+
+        let emptyRow = tbody.querySelector(".empty-row");
+        if (visibleCount === 0) {
+          if (!emptyRow) {
+            emptyRow = document.createElement("tr");
+            emptyRow.className = "empty-row";
+            emptyRow.innerHTML =
+              '<td colspan="6" style="text-align: center; padding: 20px;">Chưa có dữ liệu</td>';
+            tbody.appendChild(emptyRow);
+          }
+        } else if (emptyRow) {
+          emptyRow.remove();
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", applyFilters);
+
+      window.onclick = function(event) {
+        if (event.target == document.getElementById("verifyModal")) {
+            closeVerifyModal();
+        }
+      }
+    </script>
+  </body>
+</html>

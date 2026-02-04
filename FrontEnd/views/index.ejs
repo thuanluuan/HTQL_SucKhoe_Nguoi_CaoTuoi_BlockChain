@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/dashboard-interactions.css" />
+  </head>
+  <body>
+    <%- include('partials/sidebar') %>
+
+    <div class="main-content">
+      <%- include('partials/header') %>
+
+      <div class="dashboard-grid" style="grid-template-columns: repeat(3, 1fr);">
+        
+        <div
+          class="card clickable-card"
+          onclick="window.location.href = '/patients'"
+        >
+          <h3>Hồ sơ của bạn</h3>
+          <div class="value" id="myRecordsCount"><%= (typeof stats !== 'undefined') ? stats.total : 0 %></div>
+          <div class="trend"><i class="fas fa-folder-open"></i> Sẵn sàng</div>
+        </div>
+
+        <div
+          class="card clickable-card"
+          onclick="window.location.href = '/patients'"
+        >
+          <h3>Hoạt động cuối</h3>
+          <div class="value" style="font-size: 1.5rem">
+            <% if(typeof stats !== 'undefined' && stats.lastActivity) { %>
+                <%= stats.lastActivity.toLocaleDateString('vi-VN') %>
+            <% } else { %>
+                --/--
+            <% } %>
+          </div>
+          <div class="trend">
+            <i class="fas fa-clock"></i> 
+            <% if(typeof stats !== 'undefined' && stats.lastActivity) { %>
+                <%= stats.lastActivity.toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'}) %>
+            <% } else { %>
+                Chưa có
+            <% } %>
+          </div>
+        </div>
+
+        <div
+          class="card clickable-card"
+          onclick="window.location.href = '/create-record'"
+        >
+          <h3>Khám bệnh</h3>
+          <div class="value">
+            <i class="fas fa-plus-circle" style="color: #00d2d3; font-size: 2rem; margin-top: 5px;"></i>
+          </div>
+          <div class="trend" style="color: var(--text-secondary)">
+            Tạo phiếu khám mới
+          </div>
+        </div>
+
+        </div>
+
+      <div class="dashboard-content-split">
+        
+        <div class="card left-panel">
+          <h3
+            style="
+              margin-bottom: 1.5rem;
+              font-size: 1.1rem;
+              border-bottom: 1px solid var(--border-color);
+              padding-bottom: 1rem;
+            "
+          >
+            Hoạt động gần đây
+          </h3>
+          <table class="simple-table">
+            <thead>
+              <tr>
+                <th>Tên hành động</th>
+                <th>Người thực hiện</th>
+                <th style="text-align: right">Thời gian</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (typeof recentActivities !== 'undefined' && recentActivities.length > 0) { %>
+                <% recentActivities.forEach(function(act) { %>
+                  <tr data-doctor="<%= act.doctorName %>">
+                    <td>
+                      <span class="activity-badge update" style="background: rgba(0, 210, 211, 0.15); color: #00d2d3; padding: 5px 10px; border-radius: 4px; font-size: 0.8rem;">
+                        Tạo hồ sơ mới
+                      </span>
+                    </td>
+                    <td><%= act.doctorName %></td>
+                    <td style="text-align: right">
+                        <%= act.visitDate ? act.visitDate.toLocaleDateString('vi-VN') : 'N/A' %>
+                    </td>
+                  </tr>
+                <% }); %>
+              <% } else { %>
+                <tr>
+                    <td colspan="3" style="text-align: center; color: #777;">Chưa có hoạt động nào</td>
+                </tr>
+              <% } %>
+              
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card right-panel">
+          <h3 style="margin-bottom: 1.5rem; font-size: 1.1rem">
+            Thông tin hệ thống
+          </h3>
+
+          <div class="system-stat-row" style="margin-bottom: 15px; display: flex; justify-content: space-between;">
+            <span style="color: #a4b0be;">Phiên bản:</span>
+            <span style="color: var(--text-primary); font-weight: bold">2.0.0</span>
+          </div>
+
+          <div class="system-stat-row" style="margin-bottom: 15px; display: flex; justify-content: space-between;">
+            <span style="color: #a4b0be;">Trạng thái Blockchain:</span>
+            <span class="status-badge connected" style="color: #2ed573;">
+              <i class="fas fa-link"></i> Connected
+            </span>
+          </div>
+
+          <div class="system-stat-row" style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: flex-start;">
+            <div style="color: #a4b0be; margin-top: 5px;">Smart Contract:</div>
+            
+            <div style="text-align: right;">
+                <% if (typeof contractAddress !== 'undefined' && contractAddress && contractAddress.length > 10) { %>
+                    <div style="color: #2ed573; font-weight: bold; margin-bottom: 5px;">
+                        <i class="fas fa-check-circle"></i> Đã kết nối
+                    </div>
+                    <div style="font-family: monospace; font-size: 0.8rem; background: rgba(46, 213, 115, 0.1); color: #2ed573; padding: 3px 8px; border-radius: 4px;">
+                        <%= contractAddress.substring(0, 6) %>...<%= contractAddress.substring(contractAddress.length - 4) %>
+                    </div>
+                <% } else { %>
+                    <div style="color: #ff4757; font-weight: bold;">
+                        <i class="fas fa-times-circle"></i> Chưa kết nối
+                    </div>
+                    <div style="font-size: 0.75rem; color: #a4b0be; margin-top: 3px;">
+                        (Vui lòng kiểm tra file contract.js)
+                    </div>
+                <% } %>
+            </div>
+          </div>
+
+          <div class="system-divider" style="border-top: 1px solid var(--border-color); margin: 20px 0;"></div>
+
+          <div
+            style="
+              font-size: 0.8rem;
+              color: var(--text-secondary);
+              text-align: center;
+            "
+          >
+            &copy; 2026 HealthChain Platform.<br />All rights reserved.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function updateMyRecordsCount() {
+        try {
+          const role = sessionStorage.getItem("healthchain_role") || "";
+          const name = sessionStorage.getItem("healthchain_user_name") || "";
+          const countEl = document.getElementById("myRecordsCount");
+          if (!countEl || role !== "doctor" || !name) return;
+
+          const wallet = localStorage.getItem("healthchain_wallet_address") || "";
+          const params = new URLSearchParams();
+          if (wallet) params.set("walletAddress", wallet);
+          if (name) params.set("doctorName", name);
+          fetch(`/api/count-records?${params.toString()}`)
+            .then((res) => res.json())
+            .then((data) => {
+              if (data && data.success) {
+                countEl.textContent = data.total;
+              }
+            })
+            .catch(() => {
+              // no-op
+            });
+        } catch (e) {
+          // no-op
+        }
+      })();
+
+      (function filterRecentActivities() {
+        try {
+          const role = sessionStorage.getItem("healthchain_role") || "";
+          const name = sessionStorage.getItem("healthchain_user_name") || "";
+          if (role !== "doctor" || !name) return;
+
+          const rows = document.querySelectorAll(
+            ".simple-table tbody tr[data-doctor]",
+          );
+          let visible = 0;
+          rows.forEach((row) => {
+            const doctor = row.getAttribute("data-doctor") || "";
+            if (doctor === name) {
+              row.style.display = "";
+              visible += 1;
+            } else {
+              row.style.display = "none";
+            }
+          });
+
+          if (visible === 0) {
+            const tbody = document.querySelector(".simple-table tbody");
+            if (tbody && !tbody.querySelector(".empty-row")) {
+              const tr = document.createElement("tr");
+              tr.className = "empty-row";
+              tr.innerHTML =
+                '<td colspan="3" style="text-align: center; color: #777;">Chưa có hoạt động nào</td>';
+              tbody.appendChild(tr);
+            }
+          }
+        } catch (e) {
+          // no-op
+        }
+      })();
+    </script>
+  </body>
+</html>

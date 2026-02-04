@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/header-features.css" />
+    <link rel="stylesheet" href="/css/modal.css" />
+    <style>
+      .page-wrapper {
+        padding: 0 2rem 2rem;
+      }
+
+      .page-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+      }
+
+      .page-subtitle {
+        color: var(--text-secondary);
+        margin-bottom: 1.5rem;
+      }
+
+      .mgmt-tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .mgmt-tab {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border-color);
+        padding: 0.8rem 1.2rem;
+        border-radius: 999px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+      }
+
+      .mgmt-tab.active {
+        background: rgba(52, 211, 153, 0.15);
+        color: var(--accent-green);
+        border-color: rgba(52, 211, 153, 0.4);
+      }
+
+      .mgmt-container {
+        display: none;
+      }
+
+      .mgmt-container.active {
+        display: block;
+      }
+
+      .card-panel {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .search-box {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border-color);
+        padding: 0.6rem 0.9rem;
+        border-radius: 10px;
+        min-width: 260px;
+      }
+
+      .search-box input {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--text-primary);
+        width: 100%;
+      }
+
+      .table-container {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      th,
+      td {
+        padding: 0.9rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      th {
+        color: var(--text-secondary);
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      td {
+        color: var(--text-primary);
+      }
+
+      .wallet-chip {
+        font-family: monospace;
+        color: var(--accent-green);
+        background: rgba(46, 213, 115, 0.12);
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+        display: inline-block;
+      }
+
+      .empty-state {
+        text-align: center;
+        color: var(--text-secondary);
+        padding: 2rem 0;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #00f260 0%, #0575e6 100%);
+        border: none;
+        color: #fff;
+        border-radius: 10px;
+        padding: 0.7rem 1.2rem;
+        cursor: pointer;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 10px 25px rgba(5, 117, 230, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <%- include('partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('partials/header') %>
+
+      <div class="page-wrapper">
+        <div class="page-title">Quản lý tài khoản</div>
+        <div class="page-subtitle">
+          Thêm bác sĩ và quản lý thông tin đăng nhập theo ví.
+        </div>
+
+        <div id="doctors-section" class="mgmt-container active">
+          <div class="card-panel">
+            <div class="toolbar">
+              <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input
+                  type="text"
+                  placeholder="Tìm kiếm bác sĩ..."
+                  oninput="filterDoctors(this.value)"
+                />
+              </div>
+              <button class="btn-primary" onclick="openAddDoctorModal()">
+                <i class="fas fa-plus"></i> Thêm Bác Sĩ
+              </button>
+            </div>
+
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Họ Tên</th>
+                    <th>Chuyên Khoa</th>
+                    <th>Email</th>
+                    <th>Ví</th>
+                    <th>Trạng Thái</th>
+                    <th>Hành Động</th>
+                  </tr>
+                </thead>
+                <tbody id="doctors-table-body">
+                  <% if (doctors && doctors.length > 0) { %>
+                    <% doctors.forEach(function(d) { %>
+                      <tr
+                        data-id="<%= d._id %>"
+                        data-fullname="<%= d.fullName %>"
+                        data-email="<%= d.email %>"
+                        data-cccd="<%= d.cccd %>"
+                        data-dob="<%= d.dob || '' %>"
+                        data-phone="<%= d.phone || '' %>"
+                        data-address="<%= d.address || '' %>"
+                        data-spec="<%= d.spec || '' %>"
+                        data-license="<%= d.license || '' %>"
+                        data-wallet="<%= d.walletAddress || '' %>"
+                        data-status="<%= d.status || 'active' %>"
+                      >
+                        <td>#<%= d._id.toString().slice(-5) %></td>
+                        <td>
+                          <i class="fas fa-user-md" style="color: var(--accent-cyan)"></i>
+                          <button
+                            type="button"
+                            style="background: none; border: none; color: var(--text-primary); cursor: pointer; font-weight: 600;"
+                            onclick="openDetailModal(this)"
+                            title="Xem thông tin"
+                          >
+                            <%= d.fullName %>
+                          </button>
+                        </td>
+                        <td><%= d.spec %></td>
+                        <td><%= d.email %></td>
+                        <td>
+                          <span class="wallet-chip">
+                            <%= d.walletAddress ? (d.walletAddress.substring(0,6) + '...' + d.walletAddress.substring(d.walletAddress.length - 4)) : 'N/A' %>
+                          </span>
+                        </td>
+                        <td>
+                          <span class="activity-badge update"><%= d.status === 'active' ? 'Hoạt động' : 'Dừng' %></span>
+                        </td>
+                        <td>
+                          <button
+                            style="background: none; border: none; color: var(--text-secondary); cursor: pointer; margin-right: 8px;"
+                            onclick="openEditModal(this)"
+                            title="Chỉnh sửa"
+                          >
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button
+                            style="background: none; border: none; color: #f59e0b; cursor: pointer; margin-right: 8px;"
+                            onclick="toggleDoctorStatus(this)"
+                            title="Bật/Tắt"
+                          >
+                            <i class="fas fa-toggle-on"></i>
+                          </button>
+                          <button
+                            style="background: none; border: none; color: #ef4444; cursor: pointer;"
+                            onclick="deleteDoctor(this)"
+                            title="Xóa"
+                          >
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    <% }); %>
+                  <% } else { %>
+                    <tr>
+                      <td colspan="7" class="empty-state">
+                        Chưa có dữ liệu từ CSDL.
+                      </td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <script>
+      let currentEditingId = null;
+
+      function getRowData(btn) {
+        const row = btn.closest("tr");
+        if (!row) return null;
+        return {
+          id: row.getAttribute("data-id"),
+          fullName: row.getAttribute("data-fullname") || "",
+          email: row.getAttribute("data-email") || "",
+          cccd: row.getAttribute("data-cccd") || "",
+          dob: row.getAttribute("data-dob") || "",
+          phone: row.getAttribute("data-phone") || "",
+          address: row.getAttribute("data-address") || "",
+          spec: row.getAttribute("data-spec") || "",
+          license: row.getAttribute("data-license") || "",
+          wallet: row.getAttribute("data-wallet") || "",
+          status: row.getAttribute("data-status") || "active",
+        };
+      }
+
+      function openDetailModal(btn) {
+        const data = getRowData(btn);
+        if (!data) return;
+
+        document.getElementById("detail-name").value = data.fullName;
+        document.getElementById("detail-email").value = data.email;
+        document.getElementById("detail-cccd").value = data.cccd;
+        document.getElementById("detail-dob").value = data.dob;
+        document.getElementById("detail-phone").value = data.phone;
+        document.getElementById("detail-address").value = data.address;
+        document.getElementById("detail-spec").value = data.spec;
+        document.getElementById("detail-license").value = data.license;
+        document.getElementById("detail-wallet").value = data.wallet;
+        document.getElementById("detail-status").value =
+          data.status === "active" ? "Hoạt động" : "Dừng";
+
+        document.getElementById("detailModal").classList.add("open");
+      }
+
+      function closeDetailModal() {
+        document.getElementById("detailModal").classList.remove("open");
+      }
+
+      function openEditModal(btn) {
+        const data = getRowData(btn);
+        if (!data) return;
+        currentEditingId = data.id;
+        document.getElementById("edit-name").value = data.fullName;
+        document.getElementById("edit-email").value = data.email;
+        document.getElementById("edit-cccd").value = data.cccd;
+        document.getElementById("edit-dob").value = data.dob;
+        document.getElementById("edit-phone").value = data.phone;
+        document.getElementById("edit-address").value = data.address;
+        document.getElementById("edit-spec").value = data.spec;
+        document.getElementById("edit-license").value = data.license;
+        document.getElementById("edit-wallet").value = data.wallet;
+        document.getElementById("edit-status").value = data.status;
+        document.getElementById("editModal").classList.add("open");
+      }
+
+      function closeEditModal() {
+        document.getElementById("editModal").classList.remove("open");
+      }
+
+      async function saveChanges() {
+        if (!currentEditingId) return;
+
+        const payload = {
+          id: currentEditingId,
+          fullName: document.getElementById("edit-name").value,
+          email: document.getElementById("edit-email").value,
+          dob: document.getElementById("edit-dob").value,
+          phone: document.getElementById("edit-phone").value,
+          address: document.getElementById("edit-address").value,
+          spec: document.getElementById("edit-spec").value,
+          license: document.getElementById("edit-license").value,
+          walletAddress: document.getElementById("edit-wallet").value,
+          status: document.getElementById("edit-status").value,
+        };
+
+        try {
+          const response = await fetch("/api/update-doctor", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          const result = await response.json();
+          if (!response.ok || !result.success) {
+            alert(result.message || "Cập nhật thất bại");
+            return;
+          }
+
+          alert("Đã cập nhật bác sĩ");
+          window.location.reload();
+        } catch (error) {
+          console.error(error);
+          alert("Không thể cập nhật bác sĩ");
+        }
+      }
+
+      async function toggleDoctorStatus(btn) {
+        const data = getRowData(btn);
+        if (!data || !data.id) return;
+        const nextStatus = data.status === "active" ? "inactive" : "active";
+
+        try {
+          const response = await fetch("/api/doctor/status", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: data.id, status: nextStatus }),
+          });
+          const result = await response.json();
+          if (!response.ok || !result.success) {
+            alert(result.message || "Không thể cập nhật trạng thái");
+            return;
+          }
+          alert("Đã cập nhật trạng thái bác sĩ");
+          window.location.reload();
+        } catch (error) {
+          console.error(error);
+          alert("Không thể cập nhật trạng thái");
+        }
+      }
+
+      async function deleteDoctor(btn) {
+        const data = getRowData(btn);
+        if (!data || !data.id) return;
+        const ok = confirm("Bạn chắc chắn muốn xóa bác sĩ này?");
+        if (!ok) return;
+
+        try {
+          const response = await fetch(`/api/doctor/${data.id}`, {
+            method: "DELETE",
+          });
+          const result = await response.json();
+          if (!response.ok || !result.success) {
+            alert(result.message || "Không thể xóa bác sĩ");
+            return;
+          }
+          alert("Đã xóa bác sĩ");
+          window.location.reload();
+        } catch (error) {
+          console.error(error);
+          alert("Không thể xóa bác sĩ");
+        }
+      }
+
+      function filterDoctors(value) {
+        const keyword = (value || "").trim().toLowerCase();
+        const rows = document.querySelectorAll("#doctors-table-body tr");
+        let visible = 0;
+        rows.forEach((row) => {
+          const text = row.innerText.toLowerCase();
+          const show = text.includes(keyword);
+          row.style.display = show ? "" : "none";
+          if (show) visible += 1;
+        });
+
+        const empty = document.querySelector(
+          "#doctors-table-body .empty-state",
+        );
+        if (empty) {
+          empty.style.display = visible === 0 ? "" : "none";
+        }
+      }
+
+      function openAddDoctorModal() {
+        document.getElementById("addDoctorModal").classList.add("open");
+      }
+
+      function closeAddDoctorModal() {
+        document.getElementById("addDoctorModal").classList.remove("open");
+      }
+
+      async function saveNewDoctor() {
+        const name = document.getElementById("add-name").value;
+        const email = document.getElementById("add-email").value;
+        const cccd = document.getElementById("add-cccd").value;
+        const dob = document.getElementById("add-dob").value;
+        const phone = document.getElementById("add-phone").value;
+        const address = document.getElementById("add-address").value;
+        const spec = document.getElementById("add-spec").value;
+        const license = document.getElementById("add-license").value;
+        const wallet = document.getElementById("add-wallet").value;
+
+        if (!name || !email || !cccd || !spec || !wallet) {
+          alert("Vui lòng điền đầy đủ thông tin bắt buộc!");
+          return;
+        }
+
+        try {
+          const response = await fetch("/api/create-doctor", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              fullName: name,
+              email,
+              cccd,
+              dob,
+              phone,
+              address,
+              spec,
+              license,
+              walletAddress: wallet,
+            }),
+          });
+
+          const result = await response.json();
+
+          if (!response.ok) {
+            alert(result.message || "Thêm bác sĩ thất bại");
+            return;
+          }
+
+          alert("Đã thêm bác sĩ mới thành công!");
+          window.location.reload();
+        } catch (error) {
+          console.error(error);
+          alert("Không thể thêm bác sĩ. Vui lòng thử lại.");
+        }
+      }
+
+    </script>
+
+    <div id="editModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title">Chỉnh sửa tài khoản</div>
+          <button class="close-modal" onclick="closeEditModal()">&times;</button>
+        </div>
+        <form onsubmit="event.preventDefault(); saveChanges();">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
+            <div class="form-group">
+              <label>Họ và Tên</label>
+              <input type="text" id="edit-name" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="edit-email" class="form-control" required />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
+            <div class="form-group">
+              <label>CCCD</label>
+              <input type="text" id="edit-cccd" class="form-control" readonly />
+            </div>
+            <div class="form-group">
+              <label>Ngày Sinh</label>
+              <input type="date" id="edit-dob" class="form-control" style="color-scheme: dark" />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
+            <div class="form-group">
+              <label>Số Điện Thoại</label>
+              <input type="tel" id="edit-phone" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label>Chuyên Khoa</label>
+              <input type="text" id="edit-spec" class="form-control" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Quê Quán / Địa Chỉ</label>
+            <input type="text" id="edit-address" class="form-control" />
+          </div>
+
+          <div class="form-group">
+            <label>Chứng Chỉ / Giấy Phép Hành Nghề</label>
+            <input type="text" id="edit-license" class="form-control" />
+          </div>
+
+          <div class="form-group">
+            <label>Địa chỉ ví</label>
+            <input type="text" id="edit-wallet" class="form-control" />
+          </div>
+
+          <div class="form-group">
+            <label>Trạng thái</label>
+            <select id="edit-status" class="form-control">
+              <option value="active">Hoạt động</option>
+              <option value="inactive">Dừng</option>
+            </select>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" onclick="closeEditModal()">
+              Hủy bỏ
+            </button>
+            <button type="submit" class="btn-primary-modal">
+              <i class="fas fa-save" style="margin-right: 8px"></i>Lưu Thay Đổi
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="addDoctorModal" class="modal-overlay">
+      <div class="modal-content" style="width: 600px; max-height: 90vh; overflow-y: auto">
+        <div class="modal-header">
+          <div class="modal-title">Thêm Bác Sĩ Mới</div>
+          <button class="close-modal" onclick="closeAddDoctorModal()">&times;</button>
+        </div>
+
+        <form id="add-doctor-form" onsubmit="event.preventDefault(); saveNewDoctor();">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
+            <div class="form-group">
+              <label>Họ và Tên (*)</label>
+              <input type="text" id="add-name" class="form-control" placeholder="Nguyễn Văn A" required />
+            </div>
+
+            <div class="form-group">
+              <label>Email (*)</label>
+              <input type="email" id="add-email" class="form-control" placeholder="example@healthchain.com" required />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
+            <div class="form-group">
+              <label>Số CCCD/ID (*)</label>
+              <input type="text" id="add-cccd" class="form-control" placeholder="079..." required />
+            </div>
+            <div class="form-group">
+              <label>Ngày Sinh</label>
+              <input type="date" id="add-dob" class="form-control" style="color-scheme: dark" />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
+            <div class="form-group">
+              <label>Số Điện Thoại</label>
+              <input type="tel" id="add-phone" class="form-control" placeholder="090..." />
+            </div>
+            <div class="form-group">
+              <label>Chuyên Khoa (*)</label>
+              <input type="text" id="add-spec" class="form-control" placeholder="Tim mạch, Nội khoa..." required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Quê Quán / Địa Chỉ</label>
+            <input type="text" id="add-address" class="form-control" placeholder="Số nhà, Đường, Quận/Huyện..." />
+          </div>
+
+          <div class="form-group">
+            <label>Chứng Chỉ / Giấy Phép Hành Nghề</label>
+            <input type="text" id="add-license" class="form-control" placeholder="Số hiệu chứng chỉ..." />
+          </div>
+
+          <div class="form-group">
+            <label>Địa chỉ ví (*)</label>
+            <input type="text" id="add-wallet" class="form-control" placeholder="0x..." required />
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" onclick="closeAddDoctorModal()">
+              Hủy bỏ
+            </button>
+            <button type="submit" class="btn-primary-modal">
+              <i class="fas fa-plus-circle" style="margin-right: 8px"></i>Thêm Mới
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="detailModal" class="modal-overlay">
+      <div class="modal-content" style="width: 640px; max-height: 90vh; overflow-y: auto">
+        <div class="modal-header">
+          <div class="modal-title">Thông tin bác sĩ</div>
+          <button class="close-modal" onclick="closeDetailModal()">&times;</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
+          <div class="form-group">
+            <label>Họ và Tên</label>
+            <input type="text" id="detail-name" class="form-control" readonly />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="text" id="detail-email" class="form-control" readonly />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
+          <div class="form-group">
+            <label>CCCD</label>
+            <input type="text" id="detail-cccd" class="form-control" readonly />
+          </div>
+          <div class="form-group">
+            <label>Ngày Sinh</label>
+            <input type="text" id="detail-dob" class="form-control" readonly />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
+          <div class="form-group">
+            <label>Số Điện Thoại</label>
+            <input type="text" id="detail-phone" class="form-control" readonly />
+          </div>
+          <div class="form-group">
+            <label>Chuyên Khoa</label>
+            <input type="text" id="detail-spec" class="form-control" readonly />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Quê Quán / Địa Chỉ</label>
+          <input type="text" id="detail-address" class="form-control" readonly />
+        </div>
+
+        <div class="form-group">
+          <label>Chứng Chỉ / Giấy Phép Hành Nghề</label>
+          <input type="text" id="detail-license" class="form-control" readonly />
+        </div>
+
+        <div class="form-group">
+          <label>Địa chỉ ví</label>
+          <input type="text" id="detail-wallet" class="form-control" readonly />
+        </div>
+
+        <div class="form-group">
+          <label>Trạng thái</label>
+          <input type="text" id="detail-status" class="form-control" readonly />
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeDetailModal()">
+            Đóng
+          </button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

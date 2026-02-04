@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+      /* CSS Riêng cho trang chi tiết */
+      .record-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        padding: 32px;
+        max-width: 900px;
+        margin: 20px auto;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+      }
+
+      /* Dấu mộc trang trí */
+      .stamp-overlay {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 8rem;
+        opacity: 0.1;
+        transform: rotate(-15deg);
+        color: var(--accent-cyan);
+        pointer-events: none;
+      }
+
+      .record-header {
+        border-bottom: 2px solid var(--border-color);
+        padding-bottom: 20px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+
+      .main-content.full-width {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .record-title {
+        font-size: 1.8rem;
+        color: var(--text-primary);
+        font-weight: 700;
+        margin-bottom: 5px;
+      }
+
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .info-item label {
+        display: block;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .info-item .value {
+        font-size: 1.05rem;
+        color: var(--text-primary);
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.04);
+        padding: 10px 15px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+      }
+
+      .medical-section {
+        margin-bottom: 30px;
+      }
+
+      .section-head {
+        font-size: 1.2rem;
+        color: var(--accent-cyan);
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .diagnosis-box {
+        background: rgba(255, 243, 205, 0.1);
+        color: #f1c40f;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 5px solid #f1c40f;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+
+      .med-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      .med-table th {
+        background: rgba(255, 255, 255, 0.06);
+        padding: 12px;
+        text-align: left;
+        color: var(--text-secondary);
+        font-weight: 600;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .med-table td {
+        padding: 12px;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-primary);
+      }
+      .med-name {
+        color: var(--text-primary);
+        font-weight: 600;
+      }
+
+      .blockchain-footer {
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text-primary);
+        padding: 20px;
+        border-radius: 12px;
+        margin-top: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: 1px solid var(--border-color);
+      }
+
+      .hash-display {
+        font-family: monospace;
+        color: #7bed9f;
+        font-size: 0.9rem;
+        max-width: 400px;
+        word-wrap: break-word;
+      }
+
+      .btn-verify-lg {
+        background: #3742fa;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 30px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(55, 66, 250, 0.4);
+      }
+      .btn-verify-lg:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(55, 66, 250, 0.6);
+      }
+
+      .status-badge-lg {
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      /* Print styling */
+      @media print {
+        body * {
+          visibility: hidden;
+        }
+        .record-card,
+        .record-card * {
+          visibility: visible;
+        }
+        .record-card {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          box-shadow: none;
+        }
+        .no-print {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <% if (role !== 'patient') { %> <%- include('partials/sidebar') %> <% } %>
+
+    <div class="main-content <%= role === 'patient' ? 'full-width' : '' %>">
+      <%- include('partials/header', { hideWallet: role === 'patient',
+      hideNotifications: role === 'patient', hideUserMenu: role === 'patient' })
+      %>
+
+      <div class="page-container">
+        <div style="margin-bottom: 20px">
+          <a
+            href="<%= role === 'patient' ? ('/patient/' + cccd + '?role=patient') : '/patients' %>"
+            style="
+              text-decoration: none;
+              color: #747d8c;
+              display: inline-flex;
+              align-items: center;
+              gap: 5px;
+            "
+          >
+            <i class="fas fa-arrow-left"></i> Quay lại
+          </a>
+        </div>
+
+        <div class="record-card">
+          <i class="fas fa-file-medical stamp-overlay"></i>
+
+          <div class="record-header">
+            <div>
+              <div class="record-title">PHIẾU KHÁM BỆNH</div>
+              <div style="color: #a4b0be">
+                Mã hồ sơ:
+                <span style="color: #2f3542; font-weight: bold"
+                  ><%= record.recordId %></span
+                >
+              </div>
+            </div>
+            <% if (role !== 'patient') { %>
+            <button
+              onclick="window.print()"
+              class="btn-search no-print"
+              style="width: auto; background: #dfe4ea; color: #2f3542"
+            >
+              <i class="fas fa-print"></i> In phiếu
+            </button>
+            <% } %>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Bệnh nhân</label>
+              <div class="value"><%= patient ? patient.fullName : 'N/A' %></div>
+            </div>
+            <div class="info-item">
+              <label>CCCD</label>
+              <div class="value"><%= record.patientCCCD %></div>
+            </div>
+            <div class="info-item">
+              <label>Ngày sinh</label>
+              <div class="value">
+                <%= patient && patient.birthDate ? patient.birthDate : 'N/A' %>
+              </div>
+            </div>
+            <div class="info-item">
+              <label>Bác sĩ phụ trách</label>
+              <div class="value"><%= record.doctorName %></div>
+            </div>
+            <div class="info-item">
+              <label>Ngày khám</label>
+              <div class="value">
+                <%= record.visitDate ? record.visitDate.toLocaleString('vi-VN')
+                : 'N/A' %>
+              </div>
+            </div>
+            <div class="info-item">
+              <label>Trạng thái xác thực</label>
+              <div class="value" id="verificationStatus">
+                <% if(record.isVerified) { %>
+                <span style="color: #2ed573"
+                  ><i class="fas fa-check-circle"></i> Đã ký Blockchain</span
+                >
+                <% } else { %>
+                <span style="color: #ff4757"
+                  ><i class="fas fa-exclamation-circle"></i> Chưa đồng bộ</span
+                >
+                <% } %>
+              </div>
+            </div>
+          </div>
+
+          <div
+            id="integrityAlert"
+            style="
+              display: none;
+              margin-top: -10px;
+              margin-bottom: 20px;
+              padding: 12px 16px;
+              border-radius: 8px;
+              border: 1px solid #ff4757;
+              background: rgba(255, 71, 87, 0.12);
+              color: #ff4757;
+              font-weight: 600;
+            "
+          >
+            <i class="fas fa-triangle-exclamation"></i> Cảnh báo: Dữ liệu trên
+            DB đã bị thay đổi so với Blockchain.
+          </div>
+
+          <hr
+            style="border: 0; border-top: 1px dashed #ced6e0; margin: 30px 0"
+          />
+
+          <div class="medical-section">
+            <div class="section-head">
+              <i class="fas fa-stethoscope"></i> Chẩn đoán & Triệu chứng
+            </div>
+            <div class="info-grid" style="grid-template-columns: 1fr">
+              <div class="info-item">
+                <label>Triệu chứng lâm sàng</label>
+                <div
+                  class="value"
+                  style="border-left: 4px solid var(--accent-cyan)"
+                >
+                  <%= record.symptoms %>
+                </div>
+              </div>
+              <div class="info-item">
+                <label>Kết luận chẩn đoán</label>
+                <div class="diagnosis-box"><%= record.diagnosis %></div>
+              </div>
+            </div>
+          </div>
+
+          <% if(record.medications && record.medications.length > 0) { %>
+          <div class="medical-section">
+            <div class="section-head">
+              <i class="fas fa-pills"></i> Đơn thuốc
+            </div>
+            <table class="med-table">
+              <thead>
+                <tr>
+                  <th>Tên thuốc</th>
+                  <th>Liều lượng</th>
+                  <th>Cách dùng</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% record.medications.forEach(med => { %>
+                <tr>
+                  <td class="med-name"><%= med.name %></td>
+                  <td><%= med.dose %></td>
+                  <td><%= med.usage %></td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+          <% } %> <% if (role !== 'patient') { %>
+          <!-- prettier-ignore-start -->
+          <% const cidDisplay = record.blockchainCid || record.blockchainHash || "Chưa có CID"; %>
+          <div class="blockchain-footer no-print">
+            <div>
+              <div
+                style="font-size: 0.8rem; color: #a4b0be; margin-bottom: 5px"
+              >
+                BLOCKCHAIN CID
+              </div>
+              <div class="hash-display">
+                <i class="fas fa-link"></i>
+                <%= cidDisplay %>
+              </div>
+            </div>
+            <button
+              class="btn-verify-lg"
+              onclick="verifyAllIntegrity()"
+              id="verifyBtn"
+            >
+              <i class="fas fa-shield-alt"></i> KIỂM TRA TOÀN VẸN
+            </button>
+          </div>
+          <!-- prettier-ignore-end -->
+
+          <div
+            class="info-grid"
+            style="
+              grid-template-columns: repeat(2, minmax(0, 1fr));
+              margin-top: 18px;
+            "
+          >
+            <div class="info-item">
+              <label>Ví bác sĩ ký</label>
+              <div class="value" id="auditDoctorWallet">N/A</div>
+            </div>
+            <div class="info-item">
+              <label>Thời gian ký (Blockchain)</label>
+              <div class="value" id="auditTimestamp">N/A</div>
+            </div>
+          </div>
+
+          <div
+            id="verifyResult"
+            style="
+              display: none;
+              margin-top: 16px;
+              padding: 12px 16px;
+              border-radius: 8px;
+              text-align: center;
+            "
+          >
+            <h3 id="resultTitle" style="margin: 0"></h3>
+            <p id="resultDesc" style="margin: 5px 0 0 0"></p>
+          </div>
+
+          <div
+            id="integrityNote"
+            style="
+              display: none;
+              margin-top: 16px;
+              padding: 12px 16px;
+              border-radius: 8px;
+              border: 1px solid #ff4757;
+              background: rgba(255, 71, 87, 0.12);
+              color: #ff4757;
+              font-weight: 600;
+            "
+          ></div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const CURRENT_RECORD_ID = "<%= record.recordId %>";
+
+      async function verifyAllIntegrity() {
+        const btn = document.getElementById("verifyBtn");
+        const resultDiv = document.getElementById("verifyResult");
+        const title = document.getElementById("resultTitle");
+        const desc = document.getElementById("resultDesc");
+        const note = document.getElementById("integrityNote");
+
+        btn.disabled = true;
+        btn.innerHTML =
+          '<i class="fas fa-spinner fa-spin"></i> Đang đối chiếu...';
+        resultDiv.style.display = "none";
+
+        try {
+          const response = await fetch("/api/verify-record", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ recordId: CURRENT_RECORD_ID }),
+          });
+
+          const result = await response.json();
+          if (!result.success)
+            throw new Error(result.message || "Lỗi xác thực");
+
+          resultDiv.style.display = "block";
+          if (result.status === "missing") {
+            resultDiv.style.background = "#ffdd59";
+            resultDiv.style.border = "1px solid #ff4757";
+            resultDiv.style.color = "#ff4757";
+            title.innerHTML =
+              '<i class="fas fa-triangle-exclamation"></i> CHƯA ĐỒNG BỘ';
+            desc.innerText = "Hồ sơ chưa có trên Blockchain.";
+            updateAuditTrail({ doctor: "", timestamp: 0 });
+            if (note) {
+              note.style.display = "block";
+              note.innerHTML =
+                '<i class="fas fa-triangle-exclamation"></i> ' +
+                (result.message || "Chưa có CID trên Blockchain");
+            }
+          } else {
+            resultDiv.style.background = "#dff9fb";
+            resultDiv.style.border = "1px solid #2ed573";
+            resultDiv.style.color = "#2ed573";
+            title.innerHTML =
+              '<i class="fas fa-check-circle"></i> DỮ LIỆU CHÍNH XÁC';
+            desc.innerText = "Đã đồng bộ dữ liệu từ Blockchain.";
+            updateAuditTrail({
+              doctor: result.doctor,
+              timestamp: result.timestamp,
+            });
+            if (note) note.style.display = "none";
+          }
+        } catch (error) {
+          console.error(error);
+          alert("Lỗi kiểm tra: " + error.message);
+        } finally {
+          btn.innerHTML = '<i class="fas fa-shield-alt"></i> KIỂM TRA TOÀN VẸN';
+          btn.disabled = false;
+        }
+      }
+
+      async function autoCheckIntegrity() {
+        const statusEl = document.getElementById("verificationStatus");
+        const alertEl = document.getElementById("integrityAlert");
+        if (!statusEl || !alertEl) return;
+
+        try {
+          const response = await fetch("/api/verify-record", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ recordId: CURRENT_RECORD_ID }),
+          });
+          const result = await response.json();
+          if (result?.status === "missing") {
+            alertEl.style.display = "block";
+            statusEl.innerHTML =
+              '<span style="color:#ff4757;"><i class="fas fa-triangle-exclamation"></i> Hồ sơ chưa ký Blockchain</span>';
+            updateAuditTrail({ doctor: "", timestamp: 0 });
+          } else if (result?.status === "synced") {
+            updateAuditTrail({
+              doctor: result.doctor,
+              timestamp: result.timestamp,
+            });
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      function updateAuditTrail({ doctor, timestamp }) {
+        const doctorEl = document.getElementById("auditDoctorWallet");
+        const timeEl = document.getElementById("auditTimestamp");
+        if (!doctorEl || !timeEl) return;
+
+        doctorEl.innerText = doctor || "N/A";
+        if (!timestamp) {
+          timeEl.innerText = "N/A";
+          return;
+        }
+
+        const millis = Number(timestamp) * 1000;
+        const date = new Date(millis);
+        timeEl.innerText = Number.isNaN(date.getTime())
+          ? "N/A"
+          : date.toLocaleString("vi-VN");
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        autoCheckIntegrity();
+      });
+    </script>
+  </body>
+</html>

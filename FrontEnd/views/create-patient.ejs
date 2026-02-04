@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/create-record.css" />
+    <!-- Reusing form styles -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <%- include('partials/sidebar') %>
+
+    <main class="main-content">
+      <%- include('partials/header') %>
+
+      <div style="max-width: 900px; margin: 0 auto">
+        <div class="visit-form-panel">
+          <h2 class="section-title">
+            <i class="fas fa-user-plus"></i> Tạo Mới Hồ Sơ Bệnh Nhân
+          </h2>
+
+          <form id="new-patient-form" onsubmit="handleSavePatient(event)">
+            <h3
+              style="
+                color: var(--accent-green);
+                margin: 1rem 0;
+                font-size: 1rem;
+              "
+            >
+              1. Thông Tin Cá Nhân
+            </h3>
+            <div class="patient-form-grid">
+              <div class="form-group">
+                <label>Họ và Tên</label>
+                <input
+                  id="fullNameInput"
+                  type="text"
+                  class="form-control"
+                  required
+                  placeholder="Nguyễn Văn A"
+                />
+              </div>
+              <div class="form-group">
+                <label>Số CCCD/CMND</label>
+                <input
+                  id="cccdInput"
+                  type="text"
+                  class="form-control"
+                  required
+                  placeholder="012345678912"
+                />
+              </div>
+              <div class="form-group">
+                <label>Ngày Sinh</label>
+                <input
+                  id="birthDateInput"
+                  type="date"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>Số Điện Thoại</label>
+                <input
+                  id="phoneInput"
+                  type="tel"
+                  class="form-control"
+                  placeholder="0987..."
+                />
+              </div>
+              <div class="form-group full-width">
+                <label>Quê Quán / Địa Chỉ</label>
+                <input
+                  id="addressInput"
+                  type="text"
+                  class="form-control"
+                  placeholder="Số nhà, đường, phường/xã..."
+                />
+              </div>
+            </div>
+
+            <h3
+              style="
+                color: var(--accent-green);
+                margin: 1.5rem 0 1rem;
+                font-size: 1rem;
+              "
+            >
+              2. Chỉ Số Sinh Mệnh (Ban Đầu)
+            </h3>
+            <div class="patient-form-grid">
+              <div class="form-group">
+                <label>Chiều Cao (cm)</label>
+                <input
+                  id="heightInput"
+                  type="number"
+                  class="form-control"
+                  placeholder="170"
+                />
+              </div>
+              <div class="form-group">
+                <label>Cân Nặng (kg)</label>
+                <input
+                  id="weightInput"
+                  type="number"
+                  class="form-control"
+                  placeholder="65"
+                />
+              </div>
+              <div class="form-group">
+                <label>Huyết Áp (mmHg)</label>
+                <input
+                  id="bloodPressureInput"
+                  type="text"
+                  class="form-control"
+                  placeholder="120/80"
+                />
+              </div>
+              <div class="form-group">
+                <label>Nhịp Tim (bgm)</label>
+                <input
+                  id="heartRateInput"
+                  type="number"
+                  class="form-control"
+                  placeholder="75"
+                />
+              </div>
+            </div>
+
+            <h3
+              style="
+                color: var(--accent-green);
+                margin: 1.5rem 0 1rem;
+                font-size: 1rem;
+              "
+            >
+              3. Tiền Sử Bệnh
+            </h3>
+            <div class="form-group">
+              <label
+                >Tiền sử bệnh lý (Dị ứng, Phẫu thuật, Bệnh mãn tính...)</label
+              >
+              <textarea
+                id="medicalHistoryInput"
+                class="form-control"
+                rows="4"
+                placeholder="Ghi rõ tiền sử bệnh..."
+              ></textarea>
+            </div>
+
+            <div
+              style="
+                display: flex;
+                justify-content: flex-end;
+                gap: 1rem;
+                margin-top: 2rem;
+              "
+            >
+              <button
+                type="submit"
+                class="btn-save"
+                style="margin-top: 0; min-width: 150px"
+              >
+                <i class="fas fa-file-signature"></i> Ký Lưu
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      const CONTRACT_ADDRESS = "<%= contractAddress %>";
+      const CONTRACT_ABI = <%- contractABI %>;
+
+      async function handleSavePatient(e) {
+        e.preventDefault();
+
+        const fullName = document
+          .getElementById("fullNameInput")
+          ?.value?.trim();
+        const cccd = document.getElementById("cccdInput")?.value?.trim();
+        const birthDate =
+          document.getElementById("birthDateInput")?.value || "";
+        const phone =
+          document.getElementById("phoneInput")?.value?.trim() || "";
+        const address =
+          document.getElementById("addressInput")?.value?.trim() || "";
+        const heightCm =
+          Number(document.getElementById("heightInput")?.value) || 0;
+        const weightKg =
+          Number(document.getElementById("weightInput")?.value) || 0;
+        const bloodPressure =
+          document.getElementById("bloodPressureInput")?.value?.trim() || "";
+        const heartRate =
+          Number(document.getElementById("heartRateInput")?.value) || 0;
+        const medicalHistory =
+          document.getElementById("medicalHistoryInput")?.value?.trim() || "";
+
+        if (!fullName || !cccd) {
+          alert("Vui lòng nhập Họ và Tên và CCCD");
+          return;
+        }
+
+        try {
+          const response = await fetch("/api/create-patient", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              fullName,
+              cccd,
+              birthDate,
+              phone,
+              address,
+              vitalSigns: {
+                heightCm,
+                weightKg,
+                bloodPressure,
+                heartRate,
+              },
+              medicalHistory,
+            }),
+          });
+
+          let result = null;
+          const contentType = response.headers.get("content-type") || "";
+          if (contentType.includes("application/json")) {
+            result = await response.json();
+          } else {
+            const text = await response.text();
+            throw new Error(text || "Lỗi không xác định");
+          }
+
+          if (!response.ok) {
+            alert(result?.message || "Lưu thất bại");
+            return;
+          }
+
+          alert(
+            "🎉 Đã lưu hồ sơ bệnh nhân. Dữ liệu sẽ được ký Blockchain khi tạo lần khám.",
+          );
+          window.location.href = "/create-record";
+        } catch (error) {
+          console.error(error);
+          alert(error?.message || "Không thể lưu hồ sơ. Vui lòng thử lại.");
+        }
+      }
+    </script>
+  </body>
+</html>
