@@ -18,6 +18,7 @@
           <link rel="stylesheet" href="/css/style.css" />
           <link rel="stylesheet" href="/css/header-features.css" />
           <style>
+            /* Container chính cho nội dung trang */
             .log-container {
               background: var(--card-bg);
               border-radius: 16px;
@@ -26,6 +27,7 @@
               box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             }
 
+            /* Khu vực chứa bộ lọc và nút thêm mới */
             .log-filters {
               display: flex;
               gap: 1rem;
@@ -33,6 +35,7 @@
               flex-wrap: wrap;
             }
 
+            /* Nhóm input tìm kiếm có icon */
             .filter-group {
               display: flex;
               align-items: center;
@@ -55,6 +58,7 @@
               font-family: inherit;
             }
 
+            /* Bảng danh sách bệnh nhân */
             .log-table {
               width: 100%;
               border-collapse: collapse;
@@ -78,6 +82,7 @@
               background: rgba(255, 255, 255, 0.02);
             }
 
+            /* Link chuyển đến chi tiết bệnh nhân */
             .patient-link {
               color: var(--text-primary);
               text-decoration: none;
@@ -88,6 +93,7 @@
               color: var(--accent-cyan);
             }
 
+            /* Nút kiểm tra dữ liệu trên Blockchain */
             .verify-btn {
               background: rgba(255, 255, 255, 0.08);
               color: var(--text-primary);
@@ -103,6 +109,7 @@
               color: var(--accent-cyan);
             }
 
+            /* Pill hiển thị trạng thái xác thực */
             .status-pill {
               display: inline-flex;
               align-items: center;
@@ -113,12 +120,14 @@
               border: 1px solid transparent;
             }
 
+            /* Trạng thái OK (Màu xanh) */
             .status-ok {
               color: #2ed573;
               border-color: rgba(46, 213, 115, 0.4);
               background: rgba(46, 213, 115, 0.12);
             }
 
+            /* Trạng thái Cảnh báo (Màu đỏ) */
             .status-warn {
               color: #ff4757;
               border-color: rgba(255, 71, 87, 0.4);
@@ -127,12 +136,15 @@
           </style>
         </head>
         <body>
+          <!-- Sidebar Menu -->
           <%- include('partials/sidebar') %>
 
           <main class="main-content">
+            <!-- Header Top -->
             <%- include('partials/header') %>
 
             <div style="padding: 0 2rem; margin-bottom: 2rem">
+              <!-- Tiêu đề trang -->
               <div class="page-header" style="margin-bottom: 2rem">
                 <h1 style="font-size: 1.8rem; margin-bottom: 0.5rem">
                   Quản lý bệnh nhân
@@ -142,6 +154,7 @@
                 </p>
               </div>
 
+              <!-- Khu vực nội dung chính -->
               <div class="log-container">
                 <div class="log-filters">
                   <div class="filter-group">
@@ -163,6 +176,7 @@
                   </a>
                 </div>
 
+                <!-- Bảng dữ liệu -->
                 <table class="log-table" id="patientsTable">
                   <thead>
                     <tr>
@@ -175,6 +189,7 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <!-- Loop qua danh sách bệnh nhân -->
                     <% if (patients && patients.length > 0) { %>
                       <% patients.forEach(function(p) { %>
                         <tr class="patient-row">
@@ -188,6 +203,7 @@
                           <td><%= p.birthDate || 'N/A' %></td>
                           <td><%= p.createdAt ? p.createdAt.toLocaleDateString('vi-VN') : 'N/A' %></td>
                           <td>
+                            <!-- Nút kiểm tra và trạng thái -->
                             <div style="display: flex; gap: 10px; align-items: center">
                               <button
                                 class="verify-btn"
@@ -219,6 +235,7 @@
           </main>
 
           <script>
+            // Hàm kiểm tra sự tồn tại của hồ sơ bệnh nhân trên Blockchain
             async function verifyPatient(btn) {
               try {
                 const patientKey = btn.getAttribute("data-patient-key") || "";
@@ -232,6 +249,7 @@
                 btn.innerHTML =
                   '<i class="fas fa-spinner fa-spin"></i> Đang kiểm tra';
 
+                // Gọi API kiểm tra record
                 const response = await fetch(
                   `/api/patient-records?patientKey=${encodeURIComponent(patientKey)}`,
                 );
@@ -240,6 +258,7 @@
                   ? result.recordIds.length
                   : 0;
 
+                // Cập nhật giao diện dựa trên kết quả
                 const statusPill = btn.parentElement.querySelector(".status-pill");
                 if (recordCount > 0) {
                   if (statusPill) {
@@ -269,6 +288,7 @@
               }
             }
 
+            // Hàm lọc danh sách bệnh nhân theo từ khóa (Client-side)
             function filterPatients(value) {
               const keyword = value.trim().toLowerCase();
               const rows = document.querySelectorAll(".patient-row");
