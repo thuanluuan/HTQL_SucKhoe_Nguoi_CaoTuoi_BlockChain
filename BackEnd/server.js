@@ -426,17 +426,17 @@ app.use(express.urlencoded({ extended: true }));
 
 // --- 3. CÁC ROUTES CHÍNH ---
 
-// A. Trang chủ (Dashboard)
-// --- Route: Trang chủ (Dashboard) ---
+// A. Trang chủ (Dashboard).
+// --- Route: Trang chủ (Dashboard) --
 // --- File: BackEnd/server.js ---
 
 // Route: Trang chủ (Dashboard)
-// --- Route: Trang chủ (Dashboard) - BẢN DEBUG ---
+// --- Route: Trang chủ (Dashboard) - BẢN DEBUG ---.
 app.get("/", async (req, res) => {
   console.log("-----------------------------------------");
   console.log("🔍 ĐANG TRUY CẬP TRANG CHỦ...");
 
-  // Kiểm tra xem biến CONTRACT_ADDRESS có dữ liệu không
+  // Kiểm tra xem biến CONTRACT_ADDRESS có dữ liệu không.
   console.log("📜 Địa chỉ Contract trong Server là:", CONTRACT_ADDRESS);
 
   if (!CONTRACT_ADDRESS) {
@@ -475,13 +475,13 @@ app.get("/", async (req, res) => {
       title: "HealthChain - Dashboard",
       stats: { total: 0, lastActivity: null, appointments: 0 },
       recentActivities: [],
-      contractAddress: "N/A", // Gửi tạm cái này để không lỗi ejs
+      contractAddress: "N/A", // Gửi tạm cái này để không lỗi ejs.
     });
   }
   console.log("-----------------------------------------");
 });
 
-// B. Trang Danh Sách Bệnh Nhân (QUAN TRỌNG)
+// B. Trang Danh Sách Bệnh Nhân (QUAN TRỌNG).
 app.get("/patients", async (req, res) => {
   try {
     // Lấy dữ liệu mới nhất lên đầu
@@ -492,7 +492,7 @@ app.get("/patients", async (req, res) => {
       recordsRaw = await Record.find().sort({ visitDate: -1 });
     }
 
-    // Chuẩn hóa dữ liệu để gửi xuống EJS
+    // Chuẩn hóa dữ liệu để gửi xuống EJS.
     const records = recordsRaw.map((rec) => {
       const chainValue = rec.blockchainCid || rec.blockchainHash || "";
       return {
@@ -509,14 +509,14 @@ app.get("/patients", async (req, res) => {
         medications: Array.isArray(rec.medications) ? rec.medications : [],
         isVerified: rec.isVerified,
         blockchainCid: rec.blockchainCid || "",
-        dbHash: chainValue || "Chưa đồng bộ", // CID/Hash lưu trong DB
+        dbHash: chainValue || "Chưa đồng bộ", // CID/Hash lưu trong DB.
       };
     });
 
     res.render("patients", {
       title: "Hồ sơ sức khỏe",
       records: records,
-      // Gửi kèm Config để EJS dùng kết nối MetaMask
+      // Gửi kèm Config để EJS dùng kết nối MetaMask.
       contractAddress: CONTRACT_ADDRESS,
       contractABI: JSON.stringify(CONTRACT_ABI),
     });
@@ -657,7 +657,7 @@ app.post("/api/create-record", async (req, res) => {
     await newRecord.save();
     console.log("✅ Đã lưu MongoDB (Chờ Hash):", newId);
 
-    // Trả về ID để Frontend dùng tiếp cho bước ký Blockchain
+    // Trả về ID để Frontend dùng tiếp cho bước ký Blockchain.
     res.json({ success: true, message: "Lưu thành công!", id: newId });
   } catch (error) {
     console.error(error);
@@ -665,7 +665,7 @@ app.post("/api/create-record", async (req, res) => {
   }
 });
 
-// API 1.5: Chuẩn bị dữ liệu on-chain (AES + IPFS) và trả CID
+// API 1.5: Chuẩn bị dữ liệu on-chain (AES + IPFS) và trả CID.
 app.post("/api/prepare-chain-record", async (req, res) => {
   try {
     const { recordId } = req.body;
@@ -718,7 +718,7 @@ app.post("/api/prepare-chain-record", async (req, res) => {
   }
 });
 
-// API 1.6: Kiểm tra và đồng bộ lại dữ liệu từ Blockchain
+// API 1.6: Kiểm tra và đồng bộ lại dữ liệu từ Blockchain.
 app.post("/api/verify-record", async (req, res) => {
   try {
     const { recordId } = req.body;
@@ -776,7 +776,7 @@ app.post("/api/verify-record", async (req, res) => {
   }
 });
 
-// API 1.7: Tra cứu recordIds theo patientKey
+// API 1.7: Tra cứu recordIds theo patientKey.
 app.get("/api/patient-records", async (req, res) => {
   try {
     const patientKey = (req.query.patientKey || "").trim();
@@ -801,7 +801,7 @@ app.get("/api/patient-records", async (req, res) => {
   }
 });
 
-// API 1.7.1: Backfill dữ liệu từ Blockchain theo danh sách bệnh nhân trong DB
+// API 1.7.1: Backfill dữ liệu từ Blockchain theo danh sách bệnh nhân trong DB.
 app.post("/api/backfill-chain", async (req, res) => {
   try {
     const summary = await backfillFromChainFromPatients();
@@ -814,17 +814,17 @@ app.post("/api/backfill-chain", async (req, res) => {
   }
 });
 
-// API 1.8: KHÔI PHỤC TOÀN BỘ DỮ LIỆU TỪ BLOCKCHAIN (Disaster Recovery)
+// API 1.8: KHÔI PHỤC TOÀN BỘ DỮ LIỆU TỪ BLOCKCHAIN (Disaster Recovery).
 // API này chứng minh rằng dù mất DB, chỉ cần Blockchain còn là dữ liệu còn.
 app.post("/api/admin/resync-all", async (req, res) => {
   try {
     console.log("⚠️ Đang thực hiện khôi phục toàn bộ dữ liệu từ Blockchain...");
     
-    // 1. Xóa trạng thái đồng bộ cũ để tránh conflict
+    // 1. Xóa trạng thái đồng bộ cũ để tránh conflict.
     await ChainSyncState.deleteMany({ key: "records" });
 
-    // 2. Gọi hàm đồng bộ bắt đầu từ Block 0 (hoặc block deploy contract)
-    // Chạy ngầm (không await) để trả về response ngay cho client đỡ timeout
+    // 2. Gọi hàm đồng bộ bắt đầu từ Block 0 (hoặc block deploy contract).
+    // Chạy ngầm (không await) để trả về response ngay cho client đỡ timeout.
     syncFromChain(0).then(() => console.log("✅ Khôi phục dữ liệu hoàn tất!"));
 
     return res.json({ success: true, message: "Đang tiến hành khôi phục dữ liệu từ Block 0. Vui lòng đợi vài phút và tải lại trang." });
